@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "tlSettings.h"
 #include "tlData.h"
+#include "configdlg.h"
 
 namespace Ui {
 class MainWindow;
@@ -22,19 +23,25 @@ private:
 //    void createTrayIcon();
     void createTimer();
 
-//    void closeEvent(QCloseEvent *); // Overriding the window's close event
+    void closeEvent(QCloseEvent *); // Overriding the window's close event
 
-    void checkState( void );
+    void ReadDataBase( void );
+    void DBSelect( void );
+    void DBCreate( void );
 
     QString formatWorkTime( qint64 time );
 
     Ui::MainWindow *ui;
 
+    ConfigDlg* confdlg;
+
     tlSettings settings;
     tlData data;
 
     bool f_working;
+    bool f_break;
     qint64 worktime;
+    qint64 breaktime;
 
 //    QSystemTrayIcon *trayIcon;
 //    QMenu *trayIconMenu;
@@ -42,18 +49,16 @@ private:
 //    QAction *configAction;
 //    QAction *closeAction;
 
-//    ascConfigDlg* configDlg;
-//    QVector<ascServerInfo*> servers;
-
     QTimer *timer;
-
-//    QUdpSocket* udpSocket;
 
 private slots:
     void ticTimer( );
+
+    void tbSettingsClicked();
 //    void trayIconClicked( QSystemTrayIcon::ActivationReason );
 
     void WorkStartStopClicked();
+    void BreakStartStopClicked();
 };
 
 #endif // MAINWINDOW_H

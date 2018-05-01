@@ -1,5 +1,6 @@
 #include "tlSettings.h"
 #include <QSettings>
+#include <QDir>
 
 tlSettings::tlSettings()
 {
@@ -10,7 +11,7 @@ bool tlSettings::ReadSettings( void )
 {
     QSettings settings;
 
-    settings.value( "DataPath", "" ).toInt();
+    strDataPath = settings.value( "DataPath", QDir::homePath() + "/TimeLogData.xml" ).toString();
 
     return true;
 }

@@ -39,6 +39,7 @@ public:
 
     bool AddTime( QDate date, QTime time, TimeType_t type, TimeTask_t task);
 
+    void Clear( void );
     //bool WorkingNow();
 
 protected:

@@ -15,13 +15,16 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     tlSettings.cpp \
-    tlData.cpp
+    tlData.cpp \
+    configdlg.cpp
 
 HEADERS  += mainwindow.h \
     tlSettings.h \
-    tlData.h
+    tlData.h \
+    configdlg.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    configdlg.ui
 
 RESOURCES += \
     res.qrc

@@ -29,14 +29,14 @@
        <item row="2" column="0">
         <widget class="QPushButton" name="pbWorkStartStop">
          <property name="text">
-          <string>Start/Stop</string>
+          <string>Start</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
         <widget class="QPushButton" name="pbBreakStartStop">
          <property name="text">
-          <string>Start/Stop</string>
+          <string>Pause</string>
          </property>
         </widget>
        </item>
@@ -136,10 +136,18 @@
      <item>
       <layout class="QVBoxLayout" name="vlProject">
        <item>
-        <widget class="QComboBox" name="cbProjSel"/>
+        <widget class="QComboBox" name="cbProjSel">
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="leProjComment"/>
+        <widget class="QComboBox" name="cbProjComment">
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <layout class="QHBoxLayout" name="hlProject1">
@@ -158,7 +166,7 @@
          <item>
           <widget class="QPushButton" name="pbProjStartStop">
            <property name="text">
-            <string>Start/Stop</string>
+            <string>Start</string>
            </property>
           </widget>
          </item>

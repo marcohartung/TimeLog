@@ -153,3 +153,9 @@ bool tlData::AddTime( QDate date, QTime time, TimeType_t type, TimeTask_t task){
 
     return true;
 }
+
+void tlData::Clear( void ){
+
+    days.clear();
+    fModified = true;
+}
