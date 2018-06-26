@@ -25,7 +25,10 @@ private:
 
     void closeEvent(QCloseEvent *); // Overriding the window's close event
 
+    void updateDataFields( void );
+
     void ReadDataBase( void );
+    void WriteDataBase( void );
     void DBSelect( void );
     void DBCreate( void );
 

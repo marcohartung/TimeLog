@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
 
-    confdlg = new ConfigDlg( this );
+    confdlg = 0;
 
     settings.ReadSettings();
 
@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //trayIcon->show();
 
     ReadDataBase();
+    updateDataFields();
 }
 
 MainWindow::~MainWindow()
@@ -102,9 +103,15 @@ void MainWindow::ticTimer(){
 void MainWindow::tbSettingsClicked(){
 
     // TODO
+    if( confdlg == 0){
+        confdlg = new ConfigDlg( this );
+    }
+
+    confdlg->SetData( &data );
     if( confdlg->exec() == QDialog::Accepted ){
         settings.ReadSettings();
-        ReadDataBase();
+        WriteDataBase( );
+        updateDataFields();
     }
 
 }
@@ -151,7 +158,7 @@ void MainWindow::tbSettingsClicked(){
 
 void MainWindow::closeEvent( QCloseEvent *event ){
 
-    data.WriteXml( settings.DataPath() );
+    WriteDataBase();
 
 //    if (trayIcon->isVisible()) {
 //        hide();
@@ -160,9 +167,18 @@ void MainWindow::closeEvent( QCloseEvent *event ){
 //    }
 }
 
+void MainWindow::updateDataFields( void )
+{
+    QVector<tlData::project_t> projecsts = data.GetProjectList();
 
-void MainWindow::ReadDataBase(){
+    ui->cbProjSel->clear();
+    for( int i = 0; i < projecsts.size(); i++ ){
+        ui->cbProjSel->addItem( projecsts[i].Name );
+    }
+}
 
+void MainWindow::ReadDataBase(void )
+{
     QFileInfo datafile(settings.DataPath());
     bool state = false;
 
@@ -171,8 +187,8 @@ void MainWindow::ReadDataBase(){
         if( datafile.exists() && datafile.isFile() ) {
             if( data.ReadXml( settings.DataPath() ) == true ){
                 state = true;
-                break;
             }
+            break;
         }
         else{
             QMessageBox msgBox;
@@ -197,6 +213,19 @@ void MainWindow::ReadDataBase(){
         msgBox.setIcon( QMessageBox::Critical );
         msgBox.exec();
     }
+}
+
+void MainWindow::WriteDataBase( void ){
+
+    QFileInfo datafile( settings.DataPath() );
+    if( datafile.exists() && datafile.isFile() ) {
+        QFile oldDb( settings.DataPath() );
+        oldDb.open( QIODevice::ReadWrite );
+        oldDb.copy( settings.DataPath() + QDateTime::currentDateTime().toString( "yyyy.mm.dd_hhmmsszzz" ) );
+        oldDb.remove();
+    }
+
+    data.WriteXml( settings.DataPath() );
 }
 
 void MainWindow::DBSelect( void ){

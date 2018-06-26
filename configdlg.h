@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "tlSettings.h"
+#include "tlData.h"
 
 namespace Ui {
 class ConfigDlg;
@@ -16,14 +17,21 @@ public:
     explicit ConfigDlg(QWidget *parent = 0);
     ~ConfigDlg();
 
+    void SetData( tlData* pd );
+
 private:
     Ui::ConfigDlg *ui;
 
     tlSettings settings;
 
+    tlData* pData;
+
 private slots:
     void accept();
     void rejected();
+
+    void ProjAdd();
+    void ProjDel();
 
     void PathChangeClicked();
 };

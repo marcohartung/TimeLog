@@ -107,6 +107,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="pbProjAdd">
+       <property name="text">
+        <string>Hinzufügen</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pbProjDel">
        <property name="text">
         <string>Löschen</string>

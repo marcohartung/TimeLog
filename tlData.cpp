@@ -29,6 +29,7 @@ bool tlData::ReadXml( const QString strfile ){
         return false;
 
     days.clear();
+    projects.clear();
 
     QDomNode node = root.firstChild();
     while( !node.isNull() ){
@@ -37,6 +38,9 @@ bool tlData::ReadXml( const QString strfile ){
             QDomElement e = node.firstChild().toElement();
             //d->m_Info.Name = e.attribute( "name" );
             //d->m_Info.id = e.attribute( "id" ).toLongLong();
+        }
+        else if( node.toElement().tagName() == "Project" ){     //Parse Project List
+            AddProject( node.toElement().attributeNode("Name").value() );
         }
         else if( node.toElement().tagName() == "Data" ){     //Parse WorkDay's
             QDomNode DataNode = node.firstChild();
@@ -81,7 +85,7 @@ bool tlData::ReadXml( const QString strfile ){
     return true;
 }
 
-bool tlData::WriteXml( const QString& FileName ){
+bool tlData::WriteXml( const QString FileName ){
     const int Indent = 4;
     QDomDocument doc;
     doc.createProcessingInstruction( "xml", "version=\"1.0\" encoding=\"UTF-8\"" );
@@ -95,10 +99,18 @@ bool tlData::WriteXml( const QString& FileName ){
 //	info.setAttribute( "id", QString::number( d.m_Info.id ) );
 //    root.appendChild( info );
 
+    // save Project list
+    for( int i = 0; i < projects.size(); i++ ){
+        QDomElement proj = doc.createElement("Project");
+        proj.setAttribute( "Name", projects[i].Name );
+        root.appendChild(proj);
+    }
+
     // Save Data
     if( days.size() ){
         QDomElement data = doc.createElement("Data");
 
+        // save workdays
         for( int i = 0; i < days.size(); i++ ){
             QDomElement day = doc.createElement("Day");
             day.setAttribute( "date", days[i].date.toString( Qt::ISODate ) );
@@ -152,6 +164,49 @@ bool tlData::AddTime( QDate date, QTime time, TimeType_t type, TimeTask_t task){
     fModified = true;
 
     return true;
+}
+
+bool tlData::AddProject( const QString projName ){
+    bool ret = false;
+    QVector<project_t>::iterator i;
+
+    for( i = projects.begin(); i < projects.end(); i++ ){
+        if( i->Name == projName ){
+            break;
+        }
+    }
+
+    if( i == projects.end() ){
+        project_t p;
+        p.Name = projName;
+        projects.append( p );
+        fModified = true;
+        ret = true;
+    }
+
+    return ret;
+}
+
+bool tlData::DelProject( const QString projName ){
+    bool ret = false;
+    QVector<project_t>::iterator i;
+
+    for( i = projects.begin(); i < projects.end(); i++ ){
+        if( i->Name == projName ){
+            break;
+        }
+    }
+
+    if( i < projects.end() ){
+        projects.erase( i );
+        ret = true;
+    }
+
+    return ret;
+}
+
+QVector<tlData::project_t>& tlData::GetProjectList( void ){
+    return projects;
 }
 
 void tlData::Clear( void ){
