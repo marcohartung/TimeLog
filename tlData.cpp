@@ -56,16 +56,19 @@ bool tlData::ReadXml( const QString strfile ){
                     QDomElement e = childNode.toElement(); // try to convert the node to an element.
                     if(!e.isNull()) {
                         if( e.tagName() == "Time" ){
-                            QDomAttr aTime = e.attributeNode("time");
+                            QDomAttr aTimeStart = e.attributeNode("timeStart");
+                            QDomAttr aTimeStop = e.attributeNode("timeStop");
                             QDomAttr aTask = e.attributeNode("task");
                             QDomAttr aType = e.attributeNode("type");
                             QTime time;
-                            time = QTime::fromString( aTime.value(), Qt::ISODate );
 
                             worktime_t worktime;
-                            worktime.time = time;
+                            time = QTime::fromString( aTimeStart.value(), Qt::ISODate );
+                            worktime.timeStart = time;
+                            time = QTime::fromString( aTimeStop.value(), Qt::ISODate );
+                            worktime.timeStop = time;
                             worktime.task = (TimeTask_t)aTask.value().toInt();
-                            worktime.type = (TimeType_t)aTask.value().toInt();
+                            //worktime.type = (TimeType_t)aTask.value().toInt();
                             workday.times.push_back( worktime );
                         }
                     }
@@ -117,8 +120,9 @@ bool tlData::WriteXml( const QString FileName ){
 
             for( int n = 0; n < days[i].times.size(); n++ ){
                    QDomElement t = doc.createElement( "Time" );
-                   t.setAttribute( "time", days[i].times[n].time.toString( Qt::ISODate )  );
-                   t.setAttribute( "type", QString::number( days[i].times[n].type ) );
+                   t.setAttribute( "timeStart", days[i].times[n].timeStart.toString( Qt::ISODate )  );
+                   t.setAttribute( "timeStop", days[i].times[n].timeStop.toString( Qt::ISODate )  );
+                   //t.setAttribute( "type", QString::number( days[i].times[n].type ) );
                    t.setAttribute( "task", QString::number( days[i].times[n].task ) );
                    day.appendChild( t );
             }
@@ -155,12 +159,29 @@ bool tlData::AddTime( QDate date, QTime time, TimeType_t type, TimeTask_t task){
         i = days.end() - 1;
     }
 
-    worktime_t t;
-    t.time = time;
-    t.type = type;
-    t.task = task;
+    if( type == enuStart ){
+        worktime_t t;
+        t.timeStart = time;
+        t.timeStop =  QTime(0, 0, 0, 0);
+        t.task = task;
+        i->times.append( t );
+    }
 
-    i->times.append( t );
+    else if( type == enuStop ){
+        QVector<worktime_t>::iterator ii;
+        for( ii = i->times.begin(); ii < i->times.end(); ii++ ){
+            if( ii->task == task && !ii->timeStop.isValid() ){
+                break;
+            }
+        }
+        if( ii == i->times.end() ){
+            // TODO No Time found
+        }
+        else{
+            ii->timeStop = time;
+        }
+    }
+
     fModified = true;
 
     return true;

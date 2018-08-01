@@ -38,6 +38,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect( ui->pbWorkStartStop, SIGNAL(clicked()), this, SLOT(WorkStartStopClicked()) );
     connect( ui->pbBreakStartStop, SIGNAL(clicked()), this, SLOT(BreakStartStopClicked()) );
+    connect( ui->pbProjStartStop    , SIGNAL(clicked()), this, SLOT(ProjStartStopClicked()) );
+
 
     //trayIcon->show();
 
@@ -243,6 +245,7 @@ void MainWindow::WorkStartStopClicked(){
         data.AddTime( QDate::currentDate(), QTime::currentTime(), tlData::enuStop, tlData::enuWork );
         ui->pbWorkStartStop->setText( tr("Start") );
         ui->pbBreakStartStop->setEnabled(false);
+        ui->pbProjStartStop->setEnabled(false);
         f_working = false;
         if( f_break ){
             // stop break also if work is finished
@@ -253,6 +256,7 @@ void MainWindow::WorkStartStopClicked(){
         data.AddTime( QDate::currentDate(), QTime::currentTime(), tlData::enuStart, tlData::enuWork );
         ui->pbWorkStartStop->setText( tr("Stop") );
         ui->pbBreakStartStop->setEnabled(true);
+        ui->pbProjStartStop->setEnabled(true);
         f_working = true;
     }
 }
@@ -268,6 +272,21 @@ void MainWindow::BreakStartStopClicked(){
         data.AddTime( QDate::currentDate(), QTime::currentTime(), tlData::enuStart, tlData::enuBreak );
         ui->pbBreakStartStop->setText( tr("Pause Ende") );
         f_break = true;
+    }
+}
+
+
+void MainWindow::ProjStartStopClicked(){
+
+    if( f_project ){
+        data.AddTime( QDate::currentDate(), QTime::currentTime(), tlData::enuStop, tlData::enuProject );
+        ui->pbProjStartStop->setText( tr("Start") );
+        f_project = false;
+    }
+    else{
+        data.AddTime( QDate::currentDate(), QTime::currentTime(), tlData::enuStart, tlData::enuBreak );
+        ui->pbProjStartStop->setText( tr("Stop") );
+        f_project = true;
     }
 }
 

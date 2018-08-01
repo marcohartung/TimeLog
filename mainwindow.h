@@ -43,6 +43,7 @@ private:
 
     bool f_working;
     bool f_break;
+    bool f_project;
     qint64 worktime;
     qint64 breaktime;
 
@@ -62,6 +63,7 @@ private slots:
 
     void WorkStartStopClicked();
     void BreakStartStopClicked();
+    void ProjStartStopClicked();
 };
 
 #endif // MAINWINDOW_H

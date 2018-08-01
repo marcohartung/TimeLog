@@ -22,9 +22,11 @@ public:
     };
 
     struct worktime_t {
-         QTime time;
-         TimeType_t type;
-         TimeTask_t task;
+        TimeTask_t task;
+        QTime timeStart;
+        QTime timeStop;
+        QString TaskName;
+        QString TaskSubName;
     };
 
     struct workday_t {
