@@ -17,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
     worktime = 0;
     f_break = false;
     breaktime = 0;
+    f_project = false;
+    projecttime = 0;
 
     ui->setupUi(this);
 
@@ -30,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createTimer();
 
     ui->pbBreakStartStop->setEnabled(false);
+    ui->pbProjStartStop->setEnabled(false);
 
     ui->tbSettings->setIcon( QIcon(":/resource/configure.png") );
     connect( ui->tbSettings, SIGNAL(clicked()), this, SLOT(tbSettingsClicked()) );
@@ -96,10 +99,15 @@ void MainWindow::ticTimer(){
     }
     else if( f_working ){
         worktime ++;
+
+        if( f_project ){
+            projecttime++;
+        }
     }
 
     ui->lWorkTime->setText( formatWorkTime( worktime ) );
     ui->lBreak->setText( formatWorkTime( breaktime ) );
+    ui->lProjTime->setText( formatWorkTime( projecttime ) );
 }
 
 void MainWindow::tbSettingsClicked(){
@@ -279,12 +287,21 @@ void MainWindow::BreakStartStopClicked(){
 void MainWindow::ProjStartStopClicked(){
 
     if( f_project ){
-        data.AddTime( QDate::currentDate(), QTime::currentTime(), tlData::enuStop, tlData::enuProject );
+        data.AddTime( QDate::currentDate(), QTime::currentTime(),
+                      tlData::enuStop, tlData::enuProject );
         ui->pbProjStartStop->setText( tr("Start") );
+        ui->cbProjSel->setEnabled( true );
+        ui->cbProjComment->setEnabled( true );
         f_project = false;
     }
     else{
-        data.AddTime( QDate::currentDate(), QTime::currentTime(), tlData::enuStart, tlData::enuBreak );
+        ui->cbProjSel->setEnabled( false );
+        ui->cbProjComment->setEnabled( false );
+        data.AddTime( QDate::currentDate(), QTime::currentTime(),
+                      tlData::enuStart, tlData::enuProject,
+                      ui->cbProjSel->currentText(),
+                      ui->cbProjComment->currentText()
+                     );
         ui->pbProjStartStop->setText( tr("Stop") );
         f_project = true;
     }

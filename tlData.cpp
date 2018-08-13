@@ -2,6 +2,10 @@
 #include <QtXml>
 #include <QMessageBox>
 
+
+const QTime tlData::invalidTime( QTime(0, 0, 0, 0) );
+
+
 tlData::tlData()
 {
 
@@ -59,7 +63,6 @@ bool tlData::ReadXml( const QString strfile ){
                             QDomAttr aTimeStart = e.attributeNode("timeStart");
                             QDomAttr aTimeStop = e.attributeNode("timeStop");
                             QDomAttr aTask = e.attributeNode("task");
-                            QDomAttr aType = e.attributeNode("type");
                             QTime time;
 
                             worktime_t worktime;
@@ -68,6 +71,14 @@ bool tlData::ReadXml( const QString strfile ){
                             time = QTime::fromString( aTimeStop.value(), Qt::ISODate );
                             worktime.timeStop = time;
                             worktime.task = (TimeTask_t)aTask.value().toInt();
+
+                            if( e.hasAttribute( "taskName" ) ){
+                                worktime.TaskName = e.attribute( "taskName" );
+                            }
+                            if( e.hasAttribute( "taskSubName" ) ){
+                                worktime.TaskSubName = e.attribute( "taskSubName" );
+                            }
+
                             //worktime.type = (TimeType_t)aTask.value().toInt();
                             workday.times.push_back( worktime );
                         }
@@ -124,9 +135,17 @@ bool tlData::WriteXml( const QString FileName ){
                    t.setAttribute( "timeStop", days[i].times[n].timeStop.toString( Qt::ISODate )  );
                    //t.setAttribute( "type", QString::number( days[i].times[n].type ) );
                    t.setAttribute( "task", QString::number( days[i].times[n].task ) );
+
+                   if( !days[i].times[n].TaskName.isEmpty() ){
+                       t.setAttribute( "taskName", days[i].times[n].TaskName );
+                   }
+                   if( !days[i].times[n].TaskSubName.isEmpty() ){
+                       t.setAttribute( "taskSubName", days[i].times[n].TaskSubName );
+                   }
+
                    day.appendChild( t );
             }
-            data.appendChild(day);
+            data.appendChild( day );
         }
         root.appendChild( data );
     }
@@ -143,7 +162,10 @@ bool tlData::WriteXml( const QString FileName ){
 }
 
 
-bool tlData::AddTime( QDate date, QTime time, TimeType_t type, TimeTask_t task){
+bool tlData::AddTime( QDate date, QTime time,
+                      TimeType_t type, TimeTask_t task,
+                      QString TaskName /* = "" */ , QString TaskSubName /* = "" */ )
+{
     QVector<workday_t>::iterator i;
 
     for( i = days.begin(); i < days.end(); i++ ){
@@ -162,15 +184,22 @@ bool tlData::AddTime( QDate date, QTime time, TimeType_t type, TimeTask_t task){
     if( type == enuStart ){
         worktime_t t;
         t.timeStart = time;
-        t.timeStop =  QTime(0, 0, 0, 0);
+        t.timeStop =  invalidTime;
         t.task = task;
+        if( TaskName != "" ){
+            t.TaskName = TaskName;
+        }
+        if( TaskSubName != "" ){
+            t.TaskSubName = TaskSubName;
+        }
+
         i->times.append( t );
     }
 
     else if( type == enuStop ){
         QVector<worktime_t>::iterator ii;
         for( ii = i->times.begin(); ii < i->times.end(); ii++ ){
-            if( ii->task == task && !ii->timeStop.isValid() ){
+            if( ii->task == task && ii->timeStop == invalidTime ){
                 break;
             }
         }

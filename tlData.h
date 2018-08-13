@@ -43,7 +43,9 @@ public:
     bool ReadXml( const QString strfile );
     bool WriteXml( const QString FileName );
 
-    bool AddTime( QDate date, QTime time, TimeType_t type, TimeTask_t task);
+    bool AddTime( QDate date, QTime time,
+                  TimeType_t type, TimeTask_t task,
+                  QString TaskName = "" , QString TaskSubName = "" );
 
     bool AddProject( const QString projName );
     bool DelProject( const QString projName );
@@ -55,6 +57,8 @@ public:
 protected:
 
 private:
+
+    static const QTime invalidTime;
 
     QVector<workday_t> days;
     QVector<project_t> projects;

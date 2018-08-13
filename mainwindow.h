@@ -46,6 +46,7 @@ private:
     bool f_project;
     qint64 worktime;
     qint64 breaktime;
+    qint64 projecttime;
 
 //    QSystemTrayIcon *trayIcon;
 //    QMenu *trayIconMenu;
