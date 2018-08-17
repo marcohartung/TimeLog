@@ -3,7 +3,7 @@
 #include <QTimer>
 #include <QFileInfo>
 #include <QMessageBox>
-#include "configdlg.h"
+#include "tltools.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     confdlg = 0;
+    reportdlg = 0;
 
     settings.ReadSettings();
 
@@ -36,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->tbSettings->setIcon( QIcon(":/resource/configure.png") );
     connect( ui->tbSettings, SIGNAL(clicked()), this, SLOT(tbSettingsClicked()) );
+    connect( ui->pbOverview, SIGNAL(clicked()), this, SLOT(pbOverviewClicked()) );
     //connect( ui->tbShowConfig, SIGNAL(clicked()), this, SLOT(hide()) );
     //connect( closeAction, SIGNAL(triggered()), qApp, SLOT(quit()) );
 
@@ -105,9 +107,9 @@ void MainWindow::ticTimer(){
         }
     }
 
-    ui->lWorkTime->setText( formatWorkTime( worktime ) );
-    ui->lBreak->setText( formatWorkTime( breaktime ) );
-    ui->lProjTime->setText( formatWorkTime( projecttime ) );
+    ui->lWorkTime->setText( tlTools::formatWorkTime( worktime ) );
+    ui->lBreak->setText( tlTools::formatWorkTime( breaktime ) );
+    ui->lProjTime->setText( tlTools::formatWorkTime( projecttime ) );
 }
 
 void MainWindow::tbSettingsClicked(){
@@ -124,6 +126,21 @@ void MainWindow::tbSettingsClicked(){
         updateDataFields();
     }
 
+}
+
+void MainWindow::pbOverviewClicked(){
+
+    if( reportdlg == 0){
+        reportdlg = new ReportDlg( this );
+    }
+
+    reportdlg->SetData( &data );
+    reportdlg->exec();
+//    if( reportdlg->exec() == QDialog::Accepted ){
+//        settings.ReadSettings();
+//        WriteDataBase( );
+//        updateDataFields();
+//    }
 }
 
 //void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)
@@ -270,13 +287,22 @@ void MainWindow::WorkStartStopClicked(){
 }
 
 void MainWindow::BreakStartStopClicked(){
+    static bool projwasrunning = false;
 
     if( f_break ){
         data.AddTime( QDate::currentDate(), QTime::currentTime(), tlData::enuStop, tlData::enuBreak );
+        if( projwasrunning ){
+            projwasrunning = false;
+            ProjStartStopClicked();
+        }
         ui->pbBreakStartStop->setText( tr("Pause") );
         f_break = false;
     }
     else{
+        if( f_project ){
+            projwasrunning = true;
+            ProjStartStopClicked();
+        }
         data.AddTime( QDate::currentDate(), QTime::currentTime(), tlData::enuStart, tlData::enuBreak );
         ui->pbBreakStartStop->setText( tr("Pause Ende") );
         f_break = true;
@@ -305,9 +331,4 @@ void MainWindow::ProjStartStopClicked(){
         ui->pbProjStartStop->setText( tr("Stop") );
         f_project = true;
     }
-}
-
-
-QString MainWindow::formatWorkTime( qint64 time ){
-    return QString::asprintf( "%02lld:%02lld:%02lld", time / (60*60),(time % (60*60)) / 60, time % 60 );
 }

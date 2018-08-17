@@ -16,15 +16,20 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     tlSettings.cpp \
     tlData.cpp \
-    configdlg.cpp
+    configdlg.cpp \
+    reportdlg.cpp \
+    tltools.cpp
 
 HEADERS  += mainwindow.h \
     tlSettings.h \
     tlData.h \
-    configdlg.h
+    configdlg.h \
+    reportdlg.h \
+    tltools.h
 
 FORMS    += mainwindow.ui \
-    configdlg.ui
+    configdlg.ui \
+    reportdlg.ui
 
 RESOURCES += \
     res.qrc

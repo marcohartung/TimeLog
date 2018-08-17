@@ -21,12 +21,26 @@ public:
         enuProject,
     };
 
-    struct worktime_t {
+    struct tasksummery_t {
+        TimeTask_t task;
+        QString TaskName;
+        QString TaskSubName;
+        qint64 time_sec;
+    };
+
+    struct worktask_t {
         TimeTask_t task;
         QTime timeStart;
         QTime timeStop;
         QString TaskName;
         QString TaskSubName;
+    };
+
+    struct worktime_t {
+        // TimeTask_t task; // allways enuWork
+        QTime timeStart;
+        QTime timeStop;
+        QVector<worktask_t> tasks;
     };
 
     struct workday_t {
@@ -52,7 +66,10 @@ public:
     QVector<project_t>& GetProjectList( void );
 
     void Clear( void );
-    //bool WorkingNow();
+
+    QVector<worktime_t> GetWorktimesOfDay( QDate date );
+
+    QVector<tasksummery_t> GetWorktimeSummery( QVector<worktime_t> workday );
 
 protected:
 

@@ -5,6 +5,7 @@
 #include "tlSettings.h"
 #include "tlData.h"
 #include "configdlg.h"
+#include "reportdlg.h"
 
 namespace Ui {
 class MainWindow;
@@ -32,11 +33,10 @@ private:
     void DBSelect( void );
     void DBCreate( void );
 
-    QString formatWorkTime( qint64 time );
-
     Ui::MainWindow *ui;
 
     ConfigDlg* confdlg;
+    ReportDlg* reportdlg;
 
     tlSettings settings;
     tlData data;
@@ -60,6 +60,7 @@ private slots:
     void ticTimer( );
 
     void tbSettingsClicked();
+    void pbOverviewClicked();
 //    void trayIconClicked( QSystemTrayIcon::ActivationReason );
 
     void WorkStartStopClicked();

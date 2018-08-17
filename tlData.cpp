@@ -70,16 +70,56 @@ bool tlData::ReadXml( const QString strfile ){
                             worktime.timeStart = time;
                             time = QTime::fromString( aTimeStop.value(), Qt::ISODate );
                             worktime.timeStop = time;
-                            worktime.task = (TimeTask_t)aTask.value().toInt();
+    //                        worktime.task = (TimeTask_t)aTask.value().toInt();
 
-                            if( e.hasAttribute( "taskName" ) ){
-                                worktime.TaskName = e.attribute( "taskName" );
-                            }
-                            if( e.hasAttribute( "taskSubName" ) ){
-                                worktime.TaskSubName = e.attribute( "taskSubName" );
-                            }
+    //                        if( e.hasAttribute( "taskName" ) ){
+    //                            worktime.TaskName = e.attribute( "taskName" );
+    //                        }
+    //                        if( e.hasAttribute( "taskSubName" ) ){
+    //                            worktime.TaskSubName = e.attribute( "taskSubName" );
+    //                        }
 
                             //worktime.type = (TimeType_t)aTask.value().toInt();
+
+
+
+  ///////////////////////////////////////////////
+
+                            QDomNode taskNode = childNode.firstChild();
+
+                            while (!taskNode.isNull()) {
+                                QDomElement e = taskNode.toElement(); // try to convert the node to an element.
+                                if(!e.isNull()) {
+                                    if( e.tagName() == "Task" ){
+                                        QDomAttr aTimeStart = e.attributeNode("timeStart");
+                                        QDomAttr aTimeStop = e.attributeNode("timeStop");
+                                        QDomAttr aTask = e.attributeNode("task");
+                                        QTime time;
+
+                                        worktask_t worktask;
+                                        time = QTime::fromString( aTimeStart.value(), Qt::ISODate );
+                                        worktask.timeStart = time;
+                                        time = QTime::fromString( aTimeStop.value(), Qt::ISODate );
+                                        worktask.timeStop = time;
+                                        worktask.task = (TimeTask_t)aTask.value().toInt();
+
+                                        if( e.hasAttribute( "taskName" ) ){
+                                            worktask.TaskName = e.attribute( "taskName" );
+                                        }
+                                        if( e.hasAttribute( "taskSubName" ) ){
+                                            worktask.TaskSubName = e.attribute( "taskSubName" );
+                                        }
+
+                                        worktime.tasks.push_back( worktask );
+                                    }
+                                }
+                                taskNode = taskNode.nextSibling();
+                            }
+
+  ///////////////////////////////////////////////
+
+
+
                             workday.times.push_back( worktime );
                         }
                     }
@@ -130,20 +170,27 @@ bool tlData::WriteXml( const QString FileName ){
             day.setAttribute( "date", days[i].date.toString( Qt::ISODate ) );
 
             for( int n = 0; n < days[i].times.size(); n++ ){
-                   QDomElement t = doc.createElement( "Time" );
-                   t.setAttribute( "timeStart", days[i].times[n].timeStart.toString( Qt::ISODate )  );
-                   t.setAttribute( "timeStop", days[i].times[n].timeStop.toString( Qt::ISODate )  );
-                   //t.setAttribute( "type", QString::number( days[i].times[n].type ) );
-                   t.setAttribute( "task", QString::number( days[i].times[n].task ) );
+                   QDomElement tim = doc.createElement( "Time" );
+                   tim.setAttribute( "timeStart", days[i].times[n].timeStart.toString( Qt::ISODate )  );
+                   tim.setAttribute( "timeStop", days[i].times[n].timeStop.toString( Qt::ISODate )  );
 
-                   if( !days[i].times[n].TaskName.isEmpty() ){
-                       t.setAttribute( "taskName", days[i].times[n].TaskName );
-                   }
-                   if( !days[i].times[n].TaskSubName.isEmpty() ){
-                       t.setAttribute( "taskSubName", days[i].times[n].TaskSubName );
+                   for( int t = 0; t < days[i].times[n].tasks.size(); t++ ){
+                          QDomElement tsk = doc.createElement( "Task" );
+                          tsk.setAttribute( "timeStart", days[i].times[n].tasks[t].timeStart.toString( Qt::ISODate )  );
+                          tsk.setAttribute( "timeStop", days[i].times[n].tasks[t].timeStop.toString( Qt::ISODate )  );
+                          tsk.setAttribute( "task", QString::number( days[i].times[n].tasks[t].task ) );
+
+                          if( !days[i].times[n].tasks[t].TaskName.isEmpty() ){
+                              tsk.setAttribute( "taskName", days[i].times[n].tasks[t].TaskName );
+                          }
+                          if( !days[i].times[n].tasks[t].TaskSubName.isEmpty() ){
+                              tsk.setAttribute( "taskSubName", days[i].times[n].tasks[t].TaskSubName );
+                          }
+
+                          tim.appendChild( tsk );
                    }
 
-                   day.appendChild( t );
+                   day.appendChild( tim );
             }
             data.appendChild( day );
         }
@@ -168,6 +215,7 @@ bool tlData::AddTime( QDate date, QTime time,
 {
     QVector<workday_t>::iterator i;
 
+    // find day
     for( i = days.begin(); i < days.end(); i++ ){
         if( i->date == date ){
             break;
@@ -181,33 +229,53 @@ bool tlData::AddTime( QDate date, QTime time,
         i = days.end() - 1;
     }
 
-    if( type == enuStart ){
-        worktime_t t;
-        t.timeStart = time;
-        t.timeStop =  invalidTime;
-        t.task = task;
-        if( TaskName != "" ){
-            t.TaskName = TaskName;
-        }
-        if( TaskSubName != "" ){
-            t.TaskSubName = TaskSubName;
-        }
+    // work time
+    if( task == enuWork ){
+        if( type == enuStart ){
+            worktime_t t;
+            t.timeStart = time;
+            t.timeStop =  invalidTime;
 
-        i->times.append( t );
-    }
-
-    else if( type == enuStop ){
-        QVector<worktime_t>::iterator ii;
-        for( ii = i->times.begin(); ii < i->times.end(); ii++ ){
-            if( ii->task == task && ii->timeStop == invalidTime ){
-                break;
+            i->times.append( t );
+        }
+        else if( type == enuStop ){
+            if( i->times.size() == 0 ){
+                // TODO No Time found
+            }
+            else{
+                i->times.last().timeStop = time;
+                //ii->timeStop = time;
+                // TODO set stop time for all sub task here
             }
         }
-        if( ii == i->times.end() ){
-            // TODO No Time found
+
+    }
+    else{ // work task
+
+        if( i->times.size() == 0 ){
+            // TODO No Time found perhaps start new worktime here
         }
         else{
-            ii->timeStop = time;
+
+            if( type == enuStart ){
+                worktask_t t;
+                t.timeStart = time;
+                t.timeStop =  invalidTime;
+                t.task = task;
+                if( TaskName != "" ){
+                    t.TaskName = TaskName;
+                }
+                if( TaskSubName != "" ){
+                    t.TaskSubName = TaskSubName;
+                }
+
+                i->times.last().tasks.append( t );
+
+            }
+            else if( type == enuStop ){
+                // todo check if task exists timeStop is invalide
+                i->times.last().tasks.last().timeStop = time;
+            }
         }
     }
 
@@ -263,4 +331,70 @@ void tlData::Clear( void ){
 
     days.clear();
     fModified = true;
+}
+
+QVector<tlData::worktime_t> tlData::GetWorktimesOfDay( QDate date ){
+    QVector<worktime_t> retWorktimes;
+    QVector<workday_t>::iterator i;
+
+    for( i = days.begin(); i < days.end(); i++ ){
+        if( i->date == date ){
+            break;
+        }
+    }
+
+    if( i < days.end() ){
+        retWorktimes = i->times;
+    }
+
+    return retWorktimes;
+}
+
+QVector<tlData::tasksummery_t> tlData::GetWorktimeSummery( QVector<tlData::worktime_t> workday ){
+    QVector<tasksummery_t> summery;
+    QVector<worktime_t>::iterator i;
+    QVector<worktask_t>::iterator ii;
+    QVector<tasksummery_t>::iterator summery_i;
+
+    // collect working hours
+    if( !workday.empty() ){
+        tasksummery_t worktime;
+        worktime.task = enuWork;
+        worktime.time_sec = 0;
+
+        for( i = workday.begin(); i < workday.end(); i++ ){
+            worktime.time_sec += (i->timeStop.msecsSinceStartOfDay() - i->timeStart.msecsSinceStartOfDay() ) / 1000;
+        }
+        summery.push_back( worktime );
+    }
+
+    for( i = workday.begin(); i < workday.end(); i++ ){
+
+        for( ii = i->tasks.begin(); ii < i->tasks.end(); ii++ ){
+
+            for( summery_i = summery.begin(); summery_i < summery.end(); summery_i++ ){
+
+                if(  summery_i->task == ii->task &&
+                     summery_i->TaskName == ii->TaskName &&
+                     summery_i->TaskSubName == ii->TaskSubName )
+                {
+                    break;
+                }
+            }
+
+            if( summery_i == summery.end() ){
+                tasksummery_t newentry;
+                newentry.task = ii->task;
+                newentry.TaskName = ii->TaskName;
+                newentry.TaskSubName = ii->TaskSubName;
+                newentry.time_sec = 0;
+                summery.push_back( newentry );
+                summery_i = summery.end() - 1;
+            }
+
+            summery_i->time_sec += (ii->timeStop.msecsSinceStartOfDay() - ii->timeStart.msecsSinceStartOfDay() ) / 1000.0;
+        }
+    }
+
+    return summery;
 }
