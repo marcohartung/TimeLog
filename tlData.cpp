@@ -398,3 +398,57 @@ QVector<tlData::tasksummery_t> tlData::GetWorktimeSummery( QVector<tlData::workt
 
     return summery;
 }
+
+tlData::WorkSummery_t tlData::GetWorktimeSummeryEx( QDate StartDate, QDate EndDate ){
+    WorkSummery_t ws;
+    QVector<worktime_t>::iterator i;
+    QVector<worktask_t>::iterator ii;
+    QVector<tasksummery_t>::iterator ts_i;
+
+    ws.TimeBreak_sec = 0;
+    ws.TimeWork_sec = 0;
+    ws.WorkDays = 0;
+
+    for( QDate date = StartDate; date <= EndDate; date = date.addDays(1) ){
+        QVector<tlData::worktime_t> workday = GetWorktimesOfDay( date );
+
+        if( !workday.empty() ){
+            ws.WorkDays++;
+        }
+
+        for( i = workday.begin(); i < workday.end(); i++ ){
+
+            ws.TimeWork_sec += (i->timeStop.msecsSinceStartOfDay() - i->timeStart.msecsSinceStartOfDay() ) / 1000;
+
+            for( ii = i->tasks.begin(); ii < i->tasks.end(); ii++ ){
+
+                if( ii->task == enuBreak ){
+                    ws.TimeBreak_sec += (ii->timeStop.msecsSinceStartOfDay() - ii->timeStart.msecsSinceStartOfDay() ) / 1000.0;
+                }
+                else{
+                    for( ts_i = ws.tasks.begin(); ts_i < ws.tasks.end(); ts_i++ ){
+                        if(  ts_i->task == ii->task &&
+                             ts_i->TaskName == ii->TaskName &&
+                             ts_i->TaskSubName == ii->TaskSubName )
+                        {
+                            break;
+                        }
+                    }
+
+                    if( ts_i == ws.tasks.end() ){
+                        tasksummery_t newentry;
+                        newentry.task = ii->task;
+                        newentry.TaskName = ii->TaskName;
+                        newentry.TaskSubName = ii->TaskSubName;
+                        newentry.time_sec = 0;
+                        ws.tasks.push_back( newentry );
+                        ts_i = ws.tasks.end() - 1;
+                    }
+                    ts_i->time_sec += (ii->timeStop.msecsSinceStartOfDay() - ii->timeStart.msecsSinceStartOfDay() ) / 1000.0;
+                }
+            }
+        }
+    }
+
+    return ws;
+}

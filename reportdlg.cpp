@@ -70,4 +70,13 @@ void ReportDlg::SetData( tlData* pd ){
     HeaderLabel.push_back( "Zeit" );
     ui->twOverview->setHeaderLabels( HeaderLabel );
 
+    // print big overwiew
+    tlData::WorkSummery_t ws = pData->GetWorktimeSummeryEx( ui->deDateStart->date(), ui->deDateEnd->date() );
+    QString WorkInfo;
+
+    WorkInfo = ui->deDateStart->date().toString() + " - " + ui->deDateEnd->date().toString();
+    WorkInfo += "\r\n";
+    WorkInfo += "Arbeitszeit:\t" + tlTools::formatWorkTime( ws.TimeWork_sec );
+
+    ui->teSummery->setText( WorkInfo );
 }

@@ -28,6 +28,13 @@ public:
         qint64 time_sec;
     };
 
+    struct WorkSummery_t {
+        qint64 TimeWork_sec;
+        qint64 TimeBreak_sec;
+        qint64 WorkDays;
+        QVector<tasksummery_t> tasks;
+    };
+
     struct worktask_t {
         TimeTask_t task;
         QTime timeStart;
@@ -70,6 +77,7 @@ public:
     QVector<worktime_t> GetWorktimesOfDay( QDate date );
 
     QVector<tasksummery_t> GetWorktimeSummery( QVector<worktime_t> workday );
+    WorkSummery_t GetWorktimeSummeryEx( QDate StartDate, QDate EndDate );
 
 protected:
 
