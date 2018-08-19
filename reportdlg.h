@@ -23,6 +23,9 @@ private:
 
     tlData* pData;
 
+private slots:
+    void UpdateView( );
+
 };
 
 #endif // REPORTDLG_H

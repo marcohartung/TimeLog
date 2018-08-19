@@ -76,8 +76,7 @@ public:
 
     QVector<worktime_t> GetWorktimesOfDay( QDate date );
 
-    QVector<tasksummery_t> GetWorktimeSummery( QVector<worktime_t> workday );
-    WorkSummery_t GetWorktimeSummeryEx( QDate StartDate, QDate EndDate );
+    WorkSummery_t GetWorktimeSummery( QDate StartDate, QDate EndDate, bool IgnoreSubTasks = true );
 
 protected:
 

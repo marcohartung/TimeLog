@@ -350,56 +350,7 @@ QVector<tlData::worktime_t> tlData::GetWorktimesOfDay( QDate date ){
     return retWorktimes;
 }
 
-QVector<tlData::tasksummery_t> tlData::GetWorktimeSummery( QVector<tlData::worktime_t> workday ){
-    QVector<tasksummery_t> summery;
-    QVector<worktime_t>::iterator i;
-    QVector<worktask_t>::iterator ii;
-    QVector<tasksummery_t>::iterator summery_i;
-
-    // collect working hours
-    if( !workday.empty() ){
-        tasksummery_t worktime;
-        worktime.task = enuWork;
-        worktime.time_sec = 0;
-
-        for( i = workday.begin(); i < workday.end(); i++ ){
-            worktime.time_sec += (i->timeStop.msecsSinceStartOfDay() - i->timeStart.msecsSinceStartOfDay() ) / 1000;
-        }
-        summery.push_back( worktime );
-    }
-
-    for( i = workday.begin(); i < workday.end(); i++ ){
-
-        for( ii = i->tasks.begin(); ii < i->tasks.end(); ii++ ){
-
-            for( summery_i = summery.begin(); summery_i < summery.end(); summery_i++ ){
-
-                if(  summery_i->task == ii->task &&
-                     summery_i->TaskName == ii->TaskName &&
-                     summery_i->TaskSubName == ii->TaskSubName )
-                {
-                    break;
-                }
-            }
-
-            if( summery_i == summery.end() ){
-                tasksummery_t newentry;
-                newentry.task = ii->task;
-                newentry.TaskName = ii->TaskName;
-                newentry.TaskSubName = ii->TaskSubName;
-                newentry.time_sec = 0;
-                summery.push_back( newentry );
-                summery_i = summery.end() - 1;
-            }
-
-            summery_i->time_sec += (ii->timeStop.msecsSinceStartOfDay() - ii->timeStart.msecsSinceStartOfDay() ) / 1000.0;
-        }
-    }
-
-    return summery;
-}
-
-tlData::WorkSummery_t tlData::GetWorktimeSummeryEx( QDate StartDate, QDate EndDate ){
+tlData::WorkSummery_t tlData::GetWorktimeSummery( QDate StartDate, QDate EndDate, bool IgnoreSubTasks /* = true */ ){
     WorkSummery_t ws;
     QVector<worktime_t>::iterator i;
     QVector<worktask_t>::iterator ii;
@@ -429,7 +380,7 @@ tlData::WorkSummery_t tlData::GetWorktimeSummeryEx( QDate StartDate, QDate EndDa
                     for( ts_i = ws.tasks.begin(); ts_i < ws.tasks.end(); ts_i++ ){
                         if(  ts_i->task == ii->task &&
                              ts_i->TaskName == ii->TaskName &&
-                             ts_i->TaskSubName == ii->TaskSubName )
+                             ( IgnoreSubTasks || ts_i->TaskSubName == ii->TaskSubName ) )
                         {
                             break;
                         }
@@ -439,7 +390,9 @@ tlData::WorkSummery_t tlData::GetWorktimeSummeryEx( QDate StartDate, QDate EndDa
                         tasksummery_t newentry;
                         newentry.task = ii->task;
                         newentry.TaskName = ii->TaskName;
-                        newentry.TaskSubName = ii->TaskSubName;
+                        if( !IgnoreSubTasks ){
+                            newentry.TaskSubName = ii->TaskSubName;
+                        }
                         newentry.time_sec = 0;
                         ws.tasks.push_back( newentry );
                         ts_i = ws.tasks.end() - 1;
