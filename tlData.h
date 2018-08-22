@@ -13,6 +13,7 @@ public:
     enum TimeType_t {
         enuStart,
         enuStop,
+        enuSpan,
     };
 
     enum TimeTask_t {
@@ -39,6 +40,7 @@ public:
         TimeTask_t task;
         QTime timeStart;
         QTime timeStop;
+        qint64 timeSpan;
         QString TaskName;
         QString TaskSubName;
     };

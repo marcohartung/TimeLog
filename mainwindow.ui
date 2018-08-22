@@ -197,9 +197,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pbNote">
+        <widget class="QPushButton" name="pbImport">
          <property name="text">
-          <string>Erfassen</string>
+          <string>Import</string>
          </property>
         </widget>
        </item>

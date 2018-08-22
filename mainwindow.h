@@ -66,6 +66,8 @@ private slots:
     void WorkStartStopClicked();
     void BreakStartStopClicked();
     void ProjStartStopClicked();
+
+    void ImportClicked();
 };
 
 #endif // MAINWINDOW_H
