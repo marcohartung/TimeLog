@@ -79,6 +79,7 @@ void ReportDlg::UpdateView( ){
             WorkInfo = ui->deDateStart->date().toString() + " - " + ui->deDateEnd->date().toString();
             WorkInfo += "\r\n";
             WorkInfo += "Arbeitszeit gesammt:\t" + tlTools::formatWorkTime( ws.TimeWork_sec ) + "\r\n";
+            WorkInfo += "Arbeittage:         \t" + QString::number( ws.WorkDays ) + "\r\n";
             WorkInfo += "Arbeitszeit pro Tag:\t" + tlTools::formatWorkTime( ws.TimeWork_sec / ws.WorkDays ) + "\r\n";
             WorkInfo += "\r\n";
             QVector<tlData::tasksummery_t>::iterator tasks_i;

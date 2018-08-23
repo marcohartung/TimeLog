@@ -5,6 +5,8 @@
 #include <QMessageBox>
 #include "tltools.h"
 
+#include <QDir>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -261,6 +263,13 @@ void MainWindow::DBSelect( void ){
 }
 
 void MainWindow::DBCreate( void ){
+
+    QFileInfo datafile( settings.DataPath() );
+    if( !datafile.absoluteDir().exists() ){
+        QDir fileDir;
+        fileDir.mkpath( datafile.absoluteDir().absolutePath() );
+    }
+
     data.Clear();
     data.WriteXml( settings.DataPath() );
 }

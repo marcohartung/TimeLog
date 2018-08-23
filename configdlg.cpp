@@ -75,10 +75,11 @@ void ConfigDlg::ProjDel(){
 
 }
 
-
 void ConfigDlg::PathChangeClicked(){
 
     QString fileName = QFileDialog::getOpenFileName( this, tr("TimeLog Data"), settings.DataPath(), tr("TimeLog Data (*.xml)") );
-    settings.SetDataPath( fileName );
-    ui->leDataPath->setText( settings.DataPath() );
+    if( !fileName.isEmpty() ){
+        settings.SetDataPath( fileName );
+        ui->leDataPath->setText( settings.DataPath() );
+    }
 }

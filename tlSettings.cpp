@@ -11,7 +11,7 @@ bool tlSettings::ReadSettings( void )
 {
     QSettings settings;
 
-    strDataPath = settings.value( "DataPath", QDir::homePath() + "/TimeLogData.xml" ).toString();
+    strDataPath = settings.value( "DataPath", QDir::homePath() + "/.TimeLog/UserData/TimeLogData.xml" ).toString();
 
     return true;
 }
