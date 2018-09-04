@@ -85,7 +85,7 @@ void ReportDlg::UpdateView( ){
             QVector<tlData::tasksummery_t>::iterator tasks_i;
             for( tasks_i = ws.tasks.begin(); tasks_i < ws.tasks.end(); tasks_i++ ) {
                 WorkInfo += tasks_i->TaskName + "\t" + tlTools::formatWorkTime( tasks_i->time_sec );
-                WorkInfo += "\t" + QString::number( (tasks_i->time_sec / ws.TimeWork_sec) * 100, 1 ) + "%\r\n"  ;
+                WorkInfo += "\t" + QString::number( ((double)(tasks_i->time_sec) / (double)(ws.TimeWork_sec)) * 100.0, 'f', 1 ) + "%\r\n"  ;
             }
             ui->teSummery->setText( WorkInfo );
         }

@@ -343,97 +343,19 @@ void MainWindow::ProjStartStopClicked(){
     }
 }
 
-void MainWindow::ImportClicked(){
-
-
-    QString strFile = "/home/marco/Projekte/TimeLog/ZeitLog.txt";
-    QFile file( strFile );
-
-    enum enuDecodeState_t{
-        dsNothing,
-        dsDateOk,
-        dsStartOk,
-        dsEndOk,
-    };
-
-    file.open( QIODevice::ReadOnly );
-
-    const int64_t maxLineLength = 255;
-    char line[maxLineLength];
-    qint64 len;    
-    QString strLine;
-    QStringList strParts;
-    enuDecodeState_t ds = dsNothing;
-    QDate date;
-    QTime timeStart, timeEnd, timeBreak;
-    while( ( len = file.readLine( line, maxLineLength ) ) > 0 ){
-
-        line[len] = '\0';
-        strLine = line;
-
-        if( strLine.startsWith( "Datum:" ) ){
-            strLine.remove( "Datum:" );
-            strParts = strLine.split( '.' );
-            date.setDate(  strParts[2].toInt() , strParts[1].toInt() , strParts[0].toInt() );
-            if( date.isValid() ){
-                ds = dsDateOk;
-                continue;
-            }
-        }
-
-        if( ds == dsDateOk ){
-            if( strLine.startsWith( "Arbeitsbeginn:" ) ){
-                strLine.remove( "Arbeitsbeginn:" );
-                strLine.remove( " " );
-                strLine.remove( "h" );
-                strParts = strLine.split( ':' );
-                timeStart.setHMS( strParts[0].toInt() , strParts[1].toInt() , 0 );
-                if( timeStart.isValid() ){
-                    ds = dsStartOk;
-                    continue;
-                }
-            }
-        }
-        else if( ds == dsStartOk ){
-            if( strLine.startsWith( "Arbeitsende:" ) ){
-                strLine.remove( "Arbeitsende:" );
-                strLine.remove( " " );
-                strLine.remove( "h" );
-                strParts = strLine.split( ':' );
-                timeEnd.setHMS( strParts[0].toInt() , strParts[1].toInt() , 0 );
-                if( timeEnd.isValid() ){
-                    ds = dsEndOk;
-                    continue;
-                }
-            }
-        }
-        else if( ds == dsEndOk ){
-            if( strLine.startsWith( "Pausendauer:" ) ){
-                strLine.remove( "Pausendauer:" );
-                strLine.remove( " " );
-                strLine.remove( "h" );
-                strParts = strLine.split( ':' );
-                timeBreak.setHMS( strParts[0].toInt() , strParts[1].toInt() , 0 );
-                if( timeBreak.isValid() ){
-                    ds = dsNothing;
-
-                    data.AddTime( date, timeStart, tlData::enuStart, tlData::enuWork );
-                    data.AddTime( date, timeBreak, tlData::enuSpan, tlData::enuBreak );
-                    data.AddTime( date, timeEnd, tlData::enuStop, tlData::enuWork );
-
-                    continue;
-                }
-            }
-        }
-
-    }
-}
-
 //void MainWindow::ImportClicked(){
 
+//    // Import BMAS App Times
 
-//    QString strFile = "/home/marco/Projekte/TimeLog/zeit_Test.txt";
+//    QString strFile = "/home/marco/Projekte/TimeLog/ZeitLog.txt";
 //    QFile file( strFile );
+
+//    enum enuDecodeState_t{
+//        dsNothing,
+//        dsDateOk,
+//        dsStartOk,
+//        dsEndOk,
+//    };
 
 //    file.open( QIODevice::ReadOnly );
 
@@ -441,34 +363,119 @@ void MainWindow::ImportClicked(){
 //    char line[maxLineLength];
 //    qint64 len;
 //    QString strLine;
-//    QStringList dateParts;
-//    QStringList TaskParts;
+//    QStringList strParts;
+//    enuDecodeState_t ds = dsNothing;
 //    QDate date;
+//    QTime timeStart, timeEnd, timeBreak;
 //    while( ( len = file.readLine( line, maxLineLength ) ) > 0 ){
 
 //        line[len] = '\0';
 //        strLine = line;
 
-//        dateParts = strLine.split( '.' );
-//        if( dateParts.size() == 3 ){
-//            date.setDate(  dateParts[2].toInt() , dateParts[1].toInt() , dateParts[0].toInt() );
+//        if( strLine.startsWith( "Datum:" ) ){
+//            strLine.remove( "Datum:" );
+//            strParts = strLine.split( '.' );
+//            date.setDate(  strParts[2].toInt() , strParts[1].toInt() , strParts[0].toInt() );
 //            if( date.isValid() ){
-//               continue;
+//                ds = dsDateOk;
+//                continue;
 //            }
 //        }
 
-//        if(  date.isValid() ){
-//            TaskParts = strLine.split( ';' );
-//            if( TaskParts.size() == 3 ){
-//                QTime taskTime;
-//                taskTime.setHMS( TaskParts[2].toInt(), 0, 0 );
-//                data.AddTime( date, taskTime,
-//                              tlData::enuSpan, tlData::enuProject,
-//                              TaskParts[0],
-//                              TaskParts[1]
-//                             );
-
+//        if( ds == dsDateOk ){
+//            if( strLine.startsWith( "Arbeitsbeginn:" ) ){
+//                strLine.remove( "Arbeitsbeginn:" );
+//                strLine.remove( " " );
+//                strLine.remove( "h" );
+//                strParts = strLine.split( ':' );
+//                timeStart.setHMS( strParts[0].toInt() , strParts[1].toInt() , 0 );
+//                if( timeStart.isValid() ){
+//                    ds = dsStartOk;
+//                    continue;
+//                }
 //            }
 //        }
+//        else if( ds == dsStartOk ){
+//            if( strLine.startsWith( "Arbeitsende:" ) ){
+//                strLine.remove( "Arbeitsende:" );
+//                strLine.remove( " " );
+//                strLine.remove( "h" );
+//                strParts = strLine.split( ':' );
+//                timeEnd.setHMS( strParts[0].toInt() , strParts[1].toInt() , 0 );
+//                if( timeEnd.isValid() ){
+//                    ds = dsEndOk;
+//                    continue;
+//                }
+//            }
+//        }
+//        else if( ds == dsEndOk ){
+//            if( strLine.startsWith( "Pausendauer:" ) ){
+//                strLine.remove( "Pausendauer:" );
+//                strLine.remove( " " );
+//                strLine.remove( "h" );
+//                strParts = strLine.split( ':' );
+//                timeBreak.setHMS( strParts[0].toInt() , strParts[1].toInt() , 0 );
+//                if( timeBreak.isValid() ){
+//                    ds = dsNothing;
+
+//                    data.AddTime( date, timeStart, tlData::enuStart, tlData::enuWork );
+//                    data.AddTime( date, timeBreak, tlData::enuSpan, tlData::enuBreak );
+//                    data.AddTime( date, timeEnd, tlData::enuStop, tlData::enuWork );
+
+//                    continue;
+//                }
+//            }
+//        }
+
 //    }
 //}
+
+void MainWindow::ImportClicked(){
+
+    return;
+
+    // Import text-style
+    // dd.mm.yyyy
+    // proj,task,time in h
+
+    QString strFile = "/home/marco/Projekte/TimeLog/Zeiten2018.txt";
+    QFile file( strFile );
+
+    file.open( QIODevice::ReadOnly );
+
+    const int64_t maxLineLength = 255;
+    char line[maxLineLength];
+    qint64 len;
+    QString strLine;
+    QStringList dateParts;
+    QStringList TaskParts;
+    QDate date;
+    while( ( len = file.readLine( line, maxLineLength ) ) > 0 ){
+
+        line[len] = '\0';
+        strLine = line;
+
+        dateParts = strLine.split( '.' );
+        if( dateParts.size() == 3 ){
+            date.setDate(  dateParts[2].toInt() , dateParts[1].toInt() , dateParts[0].toInt() );
+            if( date.isValid() ){
+               continue;
+            }
+        }
+
+        if(  date.isValid() ){
+            TaskParts = strLine.split( QRegExp("(\\;|\\,)") );
+            if( TaskParts.size() == 3 ){
+                QTime taskTime;
+                TaskParts[2].remove( 'h' );
+                taskTime.setHMS( TaskParts[2].toInt(), 0, 0 );
+                data.AddTime( date, taskTime,
+                              tlData::enuSpan, tlData::enuProject,
+                              TaskParts[0],
+                              TaskParts[1]
+                             );
+
+            }
+        }
+    }
+}
