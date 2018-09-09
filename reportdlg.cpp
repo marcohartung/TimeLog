@@ -1,6 +1,7 @@
 #include "reportdlg.h"
 #include "ui_reportdlg.h"
 #include "tltools.h"
+#include <QMenu>
 
 ReportDlg::ReportDlg(QWidget *parent) :
     QDialog(parent),
@@ -19,7 +20,9 @@ ReportDlg::ReportDlg(QWidget *parent) :
     HeaderLabel.push_back( "Datum" );
     HeaderLabel.push_back( "Zeit" );
     ui->twOverview->setHeaderLabels( HeaderLabel );
+    ui->twOverview->setContextMenuPolicy( Qt::CustomContextMenu );
 
+    connect( ui->twOverview, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ShowContextMenu(const QPoint &)));
     connect( ui->deDateStart, SIGNAL(editingFinished()), this, SLOT(UpdateView()) );
     connect( ui->deDateEnd, SIGNAL(editingFinished()), this, SLOT(UpdateView()) );
 }
@@ -90,4 +93,24 @@ void ReportDlg::UpdateView( ){
             ui->teSummery->setText( WorkInfo );
         }
     }
+}
+
+
+void ReportDlg::ShowContextMenu( const QPoint &pos )
+{
+    // for most widgets
+    // QPoint globalPos = myWidget->mapToGlobal(pos);
+    // for QAbstractScrollArea and derived classes you would use:
+    QPoint globalPos = ui->twOverview->viewport()->mapToGlobal(pos);
+    QMenu contextMenu(tr("Context menu"), this);
+
+    QAction action_edit("Bearbeiten", this);
+    connect(&action_edit, SIGNAL(triggered()), this, SLOT(removeDataPoint()));
+    contextMenu.addAction(&action_edit);
+
+    QAction action_add("Hinzufügen", this);
+    connect(&action_add, SIGNAL(triggered()), this, SLOT(removeDataPoint()));
+    contextMenu.addAction(&action_add);
+
+    contextMenu.exec( globalPos );
 }

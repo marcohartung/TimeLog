@@ -18,18 +18,21 @@ SOURCES += main.cpp\
     tlData.cpp \
     configdlg.cpp \
     reportdlg.cpp \
-    tltools.cpp
+    tltools.cpp \
+    edittaskdlg.cpp
 
 HEADERS  += mainwindow.h \
     tlSettings.h \
     tlData.h \
     configdlg.h \
     reportdlg.h \
-    tltools.h
+    tltools.h \
+    edittaskdlg.h
 
 FORMS    += mainwindow.ui \
     configdlg.ui \
-    reportdlg.ui
+    reportdlg.ui \
+    edittaskdlg.ui
 
 RESOURCES += \
     res.qrc
