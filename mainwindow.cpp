@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     confdlg = 0;
     reportdlg = 0;
+    dayviewdlg = 0;
 
     settings.ReadSettings();
 
@@ -40,14 +41,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tbSettings->setIcon( QIcon(":/resource/configure.png") );
     connect( ui->tbSettings, SIGNAL(clicked()), this, SLOT(tbSettingsClicked()) );
     connect( ui->pbOverview, SIGNAL(clicked()), this, SLOT(pbOverviewClicked()) );
+    connect( ui->pbDayView, SIGNAL(clicked()), this, SLOT(pbDayViewClicked()) );
     //connect( ui->tbShowConfig, SIGNAL(clicked()), this, SLOT(hide()) );
     //connect( closeAction, SIGNAL(triggered()), qApp, SLOT(quit()) );
 
     connect( ui->pbWorkStartStop, SIGNAL(clicked()), this, SLOT(WorkStartStopClicked()) );
     connect( ui->pbBreakStartStop, SIGNAL(clicked()), this, SLOT(BreakStartStopClicked()) );
-    connect( ui->pbProjStartStop    , SIGNAL(clicked()), this, SLOT(ProjStartStopClicked()) );
+    connect( ui->pbProjStartStop, SIGNAL(clicked()), this, SLOT(ProjStartStopClicked()) );
 
-    connect( ui->pbImport    , SIGNAL(clicked()), this, SLOT(ImportClicked()) );
+
+    //connect( ui->pbImport    , SIGNAL(clicked()), this, SLOT(ImportClicked()) );
 
     //trayIcon->show();
 
@@ -139,6 +142,21 @@ void MainWindow::pbOverviewClicked(){
 
     reportdlg->SetData( &data );
     reportdlg->exec();
+//    if( reportdlg->exec() == QDialog::Accepted ){
+//        settings.ReadSettings();
+//        WriteDataBase( );
+//        updateDataFields();
+//    }
+}
+
+void MainWindow::pbDayViewClicked(){
+
+    if( dayviewdlg == 0){
+        dayviewdlg = new DayViewDlg( this );
+    }
+
+    dayviewdlg->SetData( &data );
+    dayviewdlg->exec();
 //    if( reportdlg->exec() == QDialog::Accepted ){
 //        settings.ReadSettings();
 //        WriteDataBase( );

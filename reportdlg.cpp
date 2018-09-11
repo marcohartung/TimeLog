@@ -1,7 +1,9 @@
 #include "reportdlg.h"
 #include "ui_reportdlg.h"
 #include "tltools.h"
+
 #include <QMenu>
+#include <QtCore/QVariant>
 
 ReportDlg::ReportDlg(QWidget *parent) :
     QDialog(parent),
@@ -10,6 +12,7 @@ ReportDlg::ReportDlg(QWidget *parent) :
     ui->setupUi(this);
 
     pData = 0;
+    etskdlg = 0;
 
     const QDate today( QDate::currentDate() );
     ui->deDateStart->setDate( QDate( today.year(), today.month(), 1 ) );
@@ -53,6 +56,7 @@ void ReportDlg::UpdateView( ){
                 pTreeItem = new QTreeWidgetItem;
                 pTreeItem->setText( 0, date.toString() );
                 pTreeItem->setText( 1, tlTools::formatWorkTime( ws.TimeWork_sec ) );
+                //pTreeItem->setData( 0, Qt::UserRole, QVariant( date ) );
 
                 pTreeSubItem = new QTreeWidgetItem;
                 pTreeSubItem->setText( 0, "Pause" );
@@ -105,12 +109,34 @@ void ReportDlg::ShowContextMenu( const QPoint &pos )
     QMenu contextMenu(tr("Context menu"), this);
 
     QAction action_edit("Bearbeiten", this);
-    connect(&action_edit, SIGNAL(triggered()), this, SLOT(removeDataPoint()));
+    connect(&action_edit, SIGNAL(triggered()), this, SLOT(EditData()));
     contextMenu.addAction(&action_edit);
 
     QAction action_add("Hinzufügen", this);
-    connect(&action_add, SIGNAL(triggered()), this, SLOT(removeDataPoint()));
+    connect(&action_add, SIGNAL(triggered()), this, SLOT(AddData()));
     contextMenu.addAction(&action_add);
 
+    // geht so nicht -> es muss der Arbeitstag geladen werden und in eine Tabelle
+    // diese Kann dann editiert werden!!
+
     contextMenu.exec( globalPos );
+}
+
+void ReportDlg::EditData( )
+{
+    if( etskdlg == 0 ){
+        etskdlg = new EditTaskDlg( this );
+    }
+
+    etskdlg->exec();
+}
+
+void ReportDlg::AddData()
+{
+
+    if( etskdlg == 0 ){
+        etskdlg = new EditTaskDlg( this );
+    }
+
+    etskdlg->exec();
 }

@@ -197,12 +197,12 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pbImport">
+        <widget class="QPushButton" name="pbDayView">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="text">
-          <string>Import</string>
+          <string>Tagesansicht</string>
          </property>
         </widget>
        </item>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>280</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>50</x>
      <y>240</y>
      <width>341</width>
      <height>32</height>
@@ -43,7 +43,7 @@
      <widget class="QTimeEdit" name="timeEdit_3"/>
     </item>
     <item row="1" column="1">
-     <widget class="QComboBox" name="comboBox_2"/>
+     <widget class="QComboBox" name="cbSubProj"/>
     </item>
     <item row="2" column="0">
      <widget class="QLabel" name="label">
@@ -60,10 +60,10 @@
      </widget>
     </item>
     <item row="3" column="1">
-     <widget class="QTimeEdit" name="timeEdit_2"/>
+     <widget class="QTimeEdit" name="teStop"/>
     </item>
     <item row="2" column="1">
-     <widget class="QTimeEdit" name="timeEdit"/>
+     <widget class="QTimeEdit" name="teStart"/>
     </item>
     <item row="0" column="0">
      <widget class="QLabel" name="label_2">
@@ -80,7 +80,7 @@
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QComboBox" name="comboBox"/>
+     <widget class="QComboBox" name="cbProj"/>
     </item>
     <item row="1" column="0">
      <widget class="QLabel" name="label_5">
