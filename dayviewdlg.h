@@ -21,10 +21,13 @@ public:
 private:
     Ui::DayViewDlg *ui;
 
-    void UpdateView( );
-
-
     tlData* pData;
+
+ private slots:
+    void UpdateView( );
+    void ShowContextMenu( const QPoint &pos );
+    void AddData( );
+
 };
 
 #endif // DAYVIEWDLG_H

@@ -27,7 +27,7 @@ private:
 
 private slots:
     void UpdateView( );
-    void ShowContextMenu( const QPoint &pos );
+   // void ShowContextMenu( const QPoint &pos );
 
     void EditData( );
     void AddData();
