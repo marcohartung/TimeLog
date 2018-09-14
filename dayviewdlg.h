@@ -2,6 +2,7 @@
 #define DAYVIEWDLG_H
 
 #include <QDialog>
+#include <QMenu>
 #include "tlData.h"
 
 namespace Ui {
@@ -20,6 +21,9 @@ public:
 
 private:
     Ui::DayViewDlg *ui;
+    QMenu* cmDayContent;
+    QAction* cmaDayContentEdit;
+    QAction* cmaDayContentAdd;
 
     tlData* pData;
 
@@ -27,6 +31,7 @@ private:
     void UpdateView( );
     void ShowContextMenu( const QPoint &pos );
     void AddData( );
+    void EditData( );
 
 };
 

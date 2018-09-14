@@ -2,7 +2,6 @@
 #include "ui_dayviewdlg.h"
 #include "tltools.h"
 
-#include <QMenu>
 #include <QtCore/QVariant>
 
 DayViewDlg::DayViewDlg(QWidget *parent) :
@@ -13,6 +12,14 @@ DayViewDlg::DayViewDlg(QWidget *parent) :
 
     pData = 0;
 
+    cmDayContent = new QMenu( tr("Context menu"), this );
+    cmaDayContentEdit = new QAction("Bearbeiten", this);
+    cmaDayContentAdd = new QAction("Hinzufügen", this);
+    cmDayContent->addAction(cmaDayContentEdit);
+    cmDayContent->addAction(cmaDayContentAdd);
+
+    connect(cmaDayContentEdit, SIGNAL(triggered()), this, SLOT(EditData()));
+    connect(cmaDayContentAdd, SIGNAL(triggered()), this, SLOT(AddData()));
     connect( ui->pbNextDay, SIGNAL(clicked()), ui->deDispDay, SLOT(stepUp()) );
     connect( ui->pbPrevDay, SIGNAL(clicked()), ui->deDispDay, SLOT(stepDown()) );
     connect( ui->deDispDay, SIGNAL(editingFinished()), this, SLOT(UpdateView()) );
@@ -30,6 +37,7 @@ DayViewDlg::DayViewDlg(QWidget *parent) :
     HeaderLabel.push_back( "End" );
     ui->twDayContent->setHeaderLabels( HeaderLabel );
     ui->twDayContent->setContextMenuPolicy( Qt::CustomContextMenu );
+    ui->twDayContent->setSelectionMode( QAbstractItemView::SingleSelection );
 }
 
 DayViewDlg::~DayViewDlg()
@@ -61,8 +69,7 @@ void DayViewDlg::UpdateView( ){
                 pTreeItem->setText( 0, "" );
                 pTreeItem->setText( 1, "" );
 
-                qint64 span = (i->timeStop.msecsSinceStartOfDay() - i->timeStart.msecsSinceStartOfDay()) / 1000;
-                pTreeItem->setText( 2, tlTools::formatWorkTime( span ) );
+                pTreeItem->setText( 2, tlTools::TimesToSpanString( i->timeStart, i->timeStop ) );
                 pTreeItem->setText( 3, i->timeStart.toString() );
                 pTreeItem->setText( 4, i->timeStop.toString() );
 
@@ -76,9 +83,16 @@ void DayViewDlg::UpdateView( ){
                         pTreeSubItem->setText( 0, ii->TaskName );
                         pTreeSubItem->setText( 1, ii->TaskSubName );
                     }
-                    pTreeSubItem->setText( 2, tlTools::formatWorkTime( ii->timeSpan ) );
-                    pTreeSubItem->setText( 3, ii->timeStart.toString() );
-                    pTreeSubItem->setText( 4, ii->timeStop.toString() );
+                    if( ii->timeSpan < 0 ){
+                        pTreeSubItem->setText( 2, tlTools::TimesToSpanString( ii->timeStart, ii->timeStop ) );
+                        pTreeSubItem->setText( 3, ii->timeStart.toString() );
+                        pTreeSubItem->setText( 4, ii->timeStop.toString() );
+                    }
+                    else{
+                        pTreeSubItem->setText( 2, tlTools::formatWorkTime( ii->timeSpan ) );
+                        pTreeSubItem->setText( 3, "--" );
+                        pTreeSubItem->setText( 4, "--" );
+                    }
                     pTreeItem->addChild( pTreeSubItem );
                 }
 
@@ -99,28 +113,40 @@ void DayViewDlg::ShowContextMenu( const QPoint &pos )
     // QPoint globalPos = myWidget->mapToGlobal(pos);
     // for QAbstractScrollArea and derived classes you would use:
     QPoint globalPos = ui->twDayContent->viewport()->mapToGlobal(pos);
-    QMenu contextMenu(tr("Context menu"), this);
 
-    QAction action_edit("Bearbeiten", this);
-    connect(&action_edit, SIGNAL(triggered()), this, SLOT(EditData()));
-    contextMenu.addAction(&action_edit);
+    QModelIndex index = ui->twDayContent->indexAt(pos);
+    if( index.isValid() ){
+         cmDayContent->exec( globalPos );
+    }
+}
 
-    QAction action_add("Hinzufügen", this);
-    connect(&action_add, SIGNAL(triggered()), this, SLOT(AddData()));
-    contextMenu.addAction(&action_add);
-
-
-    contextMenu.exec( globalPos );
+void DayViewDlg::EditData(  ){
+    QPoint pos = ui->twDayContent->viewport()->mapFromGlobal( cmDayContent->pos() );
+    //QModelIndex index = ui->twDayContent->indexAt( pos );
+    QTreeWidgetItem* pTreeItem =  ui->twDayContent->itemAt( pos );
+    pTreeItem->setFlags( pTreeItem->flags() | Qt::ItemIsEditable);
+    ui->twDayContent->editItem( pTreeItem, ui->twDayContent->columnAt( pos.x() ) );
 }
 
 void DayViewDlg::AddData(  ){
+
+    if( ui->twDayContent->topLevelItemCount() <= 0 ){
+        QTreeWidgetItem* pTreeItem = new QTreeWidgetItem;
+        QTime t;
+        pTreeItem->setText( 0, "" );
+        pTreeItem->setText( 1, "" );
+        pTreeItem->setText( 2, tlTools::formatWorkTime( 0 ) );
+        pTreeItem->setText( 3, t.toString()  );
+        pTreeItem->setText( 4, t.toString() );
+        ui->twDayContent->addTopLevelItem( pTreeItem );
+    }
 
     QTreeWidgetItem* pTreeSubItem;
     pTreeSubItem = new QTreeWidgetItem;
 
     pTreeSubItem->setText( 0, "proj" );
     pTreeSubItem->setText( 1, "arg" );
-    pTreeSubItem->setText( 2, "5:00" );
+    pTreeSubItem->setText( 2, "0:00" );
     pTreeSubItem->setText( 3, "--" );
     pTreeSubItem->setText( 4, "--" );
 
