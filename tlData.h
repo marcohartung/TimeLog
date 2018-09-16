@@ -37,6 +37,7 @@ public:
     };
 
     struct worktask_t {
+        qint64 id;
         TimeTask_t task;
         QTime timeStart;
         QTime timeStop;
@@ -47,12 +48,14 @@ public:
 
     struct worktime_t {
         // TimeTask_t task; // allways enuWork
+        qint64 id;
         QTime timeStart;
         QTime timeStop;
         QVector<worktask_t> tasks;
     };
 
     struct workday_t {
+        qint64 id;
         QDate date;
         QVector<worktime_t> times;
     };
@@ -86,6 +89,9 @@ private:
 
     static const QTime invalidTime;
 
+    qint64 nextDayId;
+    qint64 nextWorkTimeId;
+    qint64 nextTaskId;
     QVector<workday_t> days;
     QVector<project_t> projects;
     bool fModified;

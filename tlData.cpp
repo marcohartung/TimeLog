@@ -34,54 +34,54 @@ bool tlData::ReadXml( const QString strfile ){
 
     days.clear();
     projects.clear();
+    nextDayId = 0;
+    nextWorkTimeId = 0;
+    nextTaskId = 0;
+
+    //Parse Internal Data
+    QDomNode internal = root.firstChildElement( "Internal");
+    if( !internal.isNull() ){
+       QDomElement e = internal.toElement();
+       if( e.hasAttribute( "nextDayId" ) ){
+           nextDayId =  e.attribute( "nextDayId" ).toLongLong();
+       }
+       if( e.hasAttribute( "nextWorkTimeId" ) ){
+           nextWorkTimeId =  e.attribute( "nextWorkTimeId" ).toLongLong();
+       }
+       if( e.hasAttribute( "nextTaskId" ) ){
+           nextTaskId =  e.attribute( "nextTaskId" ).toLongLong();
+       }
+    }
 
     QDomNode node = root.firstChild();
     while( !node.isNull() ){
 
-        if( node.toElement().tagName() == "Info" ){          //TimeLogDataInfo
-            QDomElement e = node.firstChild().toElement();
-            //d->m_Info.Name = e.attribute( "name" );
-            //d->m_Info.id = e.attribute( "id" ).toLongLong();
-        }
-        else if( node.toElement().tagName() == "Project" ){     //Parse Project List
+        if( node.toElement().tagName() == "Project" ){     //Parse Project List
             AddProject( node.toElement().attributeNode("Name").value() );
         }
         else if( node.toElement().tagName() == "Data" ){     //Parse WorkDay's
-            QDomNode DataNode = node.firstChild();
 
+            QDomNode DataNode = node.firstChild();
             while( DataNode.toElement().tagName() == "Day" ){
                 workday_t workday;
-                QDomAttr aDate = DataNode.toElement().attributeNode("date");
-                workday.date = QDate::fromString( aDate.value(), Qt::ISODate );;
+                workday.id = DataNode.toElement().attribute("id").toLongLong();
+                workday.date = QDate::fromString( DataNode.toElement().attribute("date"), Qt::ISODate );
 
                 QDomNode childNode = DataNode.firstChild();
-
                 while (!childNode.isNull()) {
                     QDomElement e = childNode.toElement(); // try to convert the node to an element.
                     if(!e.isNull()) {
                         if( e.tagName() == "Time" ){
                             QDomAttr aTimeStart = e.attributeNode("timeStart");
                             QDomAttr aTimeStop = e.attributeNode("timeStop");
-                            QDomAttr aTask = e.attributeNode("task");
                             QTime time;
 
                             worktime_t worktime;
+                            worktime.id = e.attribute( "id" ).toLongLong();
                             time = QTime::fromString( aTimeStart.value(), Qt::ISODate );
                             worktime.timeStart = time;
                             time = QTime::fromString( aTimeStop.value(), Qt::ISODate );
                             worktime.timeStop = time;
-    //                        worktime.task = (TimeTask_t)aTask.value().toInt();
-
-    //                        if( e.hasAttribute( "taskName" ) ){
-    //                            worktime.TaskName = e.attribute( "taskName" );
-    //                        }
-    //                        if( e.hasAttribute( "taskSubName" ) ){
-    //                            worktime.TaskSubName = e.attribute( "taskSubName" );
-    //                        }
-
-                            //worktime.type = (TimeType_t)aTask.value().toInt();
-
-
 
   ///////////////////////////////////////////////
 
@@ -96,6 +96,7 @@ bool tlData::ReadXml( const QString strfile ){
                                         worktask.timeStart = invalidTime;
                                         worktask.timeStop = invalidTime;
 
+                                        worktask.id = e.attribute( "id" ).toLongLong();
                                         if( e.hasAttribute( "timeSpan" ) ){
                                             worktask.timeSpan = e.attribute( "timeSpan" ).toInt();
                                         }
@@ -120,8 +121,6 @@ bool tlData::ReadXml( const QString strfile ){
 
   ///////////////////////////////////////////////
 
-
-
                             workday.times.push_back( worktime );
                         }
                     }
@@ -136,7 +135,7 @@ bool tlData::ReadXml( const QString strfile ){
         node = node.nextSibling();
     }
 
-    //    d->setModified( false );
+    fModified = false;
 
     return true;
 }
@@ -149,11 +148,12 @@ bool tlData::WriteXml( const QString FileName ){
     root.setAttribute( "version", "1.00" );
     doc.appendChild( root );
 
-    // Save TimeLogDataInfo
-//    QDomElement info = doc.createElement("Info");
-//	info.setAttribute( "name", d.m_Info.Name );
-//	info.setAttribute( "id", QString::number( d.m_Info.id ) );
-//    root.appendChild( info );
+    // Save TimeLogInternal
+    QDomElement internal = doc.createElement("Internal");
+    internal.setAttribute( "nextDayId", QString::number( nextDayId ) );
+    internal.setAttribute( "nextWorkTimeId", QString::number( nextWorkTimeId ) );
+    internal.setAttribute( "nextTaskId", QString::number( nextTaskId ) );
+    root.appendChild( internal );
 
     // save Project list
     for( int i = 0; i < projects.size(); i++ ){
@@ -169,16 +169,19 @@ bool tlData::WriteXml( const QString FileName ){
         // save workdays
         for( int i = 0; i < days.size(); i++ ){
             QDomElement day = doc.createElement("Day");
+            day.setAttribute( "id", QString::number( days[i].id ) );
             day.setAttribute( "date", days[i].date.toString( Qt::ISODate ) );
 
             for( int n = 0; n < days[i].times.size(); n++ ){
                    QDomElement tim = doc.createElement( "Time" );
+                   tim.setAttribute( "id", QString::number( days[i].times[n].id ) );
                    tim.setAttribute( "timeStart", days[i].times[n].timeStart.toString( Qt::ISODate )  );
                    tim.setAttribute( "timeStop", days[i].times[n].timeStop.toString( Qt::ISODate )  );
 
                    // save tasks
                    for( int t = 0; t < days[i].times[n].tasks.size(); t++ ){
                           QDomElement tsk = doc.createElement( "Task" );
+                          tsk.setAttribute( "id", QString::number( days[i].times[n].tasks[t].id ) );
                           if( days[i].times[n].tasks[t].timeSpan > 0 ){
                             tsk.setAttribute( "timeSpan", QString::number( days[i].times[n].tasks[t].timeSpan ) );
                           }
@@ -232,6 +235,7 @@ bool tlData::AddTime( QDate date, QTime time,
 
     if( i == days.end() ){
         workday_t d;
+        d.id = nextDayId++;
         d.date = date;
         days.append( d );
         i = days.end() - 1;
@@ -241,6 +245,7 @@ bool tlData::AddTime( QDate date, QTime time,
     if( task == enuWork ){
         if( type == enuStart ){
             worktime_t t;
+            t.id = nextWorkTimeId++;
             t.timeStart = time;
             t.timeStop =  invalidTime;
 
@@ -267,6 +272,7 @@ bool tlData::AddTime( QDate date, QTime time,
 
             if( type == enuStart ){
                 worktask_t t;
+                t.id = nextTaskId++;
                 t.timeStart = time;
                 t.timeStop =  invalidTime;
                 t.timeSpan = -1;
@@ -287,6 +293,7 @@ bool tlData::AddTime( QDate date, QTime time,
             }
             else if( type == enuSpan ){
                 worktask_t t;
+                t.id = nextTaskId++;
                 t.timeStart = invalidTime;
                 t.timeStop =  invalidTime;
                 t.timeSpan = time.msecsSinceStartOfDay() / 1000;

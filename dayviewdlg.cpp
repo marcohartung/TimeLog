@@ -1,4 +1,4 @@
-#include "dayviewdlg.h"
+﻿#include "dayviewdlg.h"
 #include "ui_dayviewdlg.h"
 #include "tltools.h"
 
@@ -50,9 +50,49 @@ void DayViewDlg::SetData( tlData* pd ){
     UpdateView();
 }
 
+void DayViewDlg::accept(){
+
+    int tlic = ui->twDayContent->topLevelItemCount();
+    int cchild;
+    QTreeWidgetItem* pTreeItem;
+    QTreeWidgetItem* pTreeSubItem;
+    for( int i = 0; i < tlic; i++ ){
+        pTreeItem = ui->twDayContent->topLevelItem( i );
+
+        cchild = pTreeItem->childCount();
+        for( int ii = 0; ii < cchild; ii++ ){
+            pTreeSubItem = pTreeItem->child( ii );
+
+            if( pTreeSubItem->flags() & Qt::ItemIsEditable ){
+                qint64 id = pTreeSubItem->data( 0, Qt::UserRole ).toLongLong();
+                if( id == 0 ){ // new item
+
+                    TimeType_t type;
+                    TimeTask_t task;
+                    QString TaskName;
+                    QString TaskSubName;
+
+                    pData->AddTime( day, type, task, TaskName, TaskSubName );
+                }
+                else{          // modified item
+                }
+            }
+            pTreeSubItem->setFlags( pTreeSubItem->flags() & ~Qt::ItemIsEditable );
+        }
+    }
+
+    this->setResult( QDialog::Accepted );
+    this->close();
+}
+
+void DayViewDlg::rejected(){
+
+}
+
 void DayViewDlg::UpdateView( ){
 
     ui->twDayContent->clear();
+    day.setDate( -1, -1 ,-1 );
 
     if( pData ){
         QTreeWidgetItem* pTreeItem;
@@ -64,8 +104,11 @@ void DayViewDlg::UpdateView( ){
 
         if( !workday.empty() ){
 
+            day = ui->deDispDay->date();
             for( i = workday.begin(); i < workday.end(); i++ ){
                 pTreeItem = new QTreeWidgetItem;
+
+                pTreeItem->setData( 0, Qt::UserRole, QVariant( i->id ) );
                 pTreeItem->setText( 0, "" );
                 pTreeItem->setText( 1, "" );
 
@@ -76,6 +119,7 @@ void DayViewDlg::UpdateView( ){
                 for( ii = i->tasks.begin(); ii < i->tasks.end(); ii++ ){
                     pTreeSubItem = new QTreeWidgetItem;
 
+                    pTreeSubItem->setData( 0, Qt::UserRole, QVariant( ii->id ) );
                     if( ii->task == tlData::enuBreak ){
                         pTreeSubItem->setText( 0, "Pause" );
                     }
@@ -97,6 +141,7 @@ void DayViewDlg::UpdateView( ){
                 }
 
                 ui->twDayContent->addTopLevelItem( pTreeItem );
+                ui->twDayContent->expandAll();
             }
         }
 

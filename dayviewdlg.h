@@ -26,8 +26,11 @@ private:
     QAction* cmaDayContentAdd;
 
     tlData* pData;
+    QDate day;
 
  private slots:
+    void accept();
+    void rejected();
     void UpdateView( );
     void ShowContextMenu( const QPoint &pos );
     void AddData( );
