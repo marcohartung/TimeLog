@@ -67,12 +67,24 @@ void DayViewDlg::accept(){
                 qint64 id = pTreeSubItem->data( 0, Qt::UserRole ).toLongLong();
                 if( id == 0 ){ // new item
 
-                    TimeType_t type;
-                    TimeTask_t task;
+                    tlData::TimeType_t type;
+                    tlData::TimeTask_t task;
                     QString TaskName;
                     QString TaskSubName;
+                    QString strT;
 
-                    pData->AddTime( day, type, task, TaskName, TaskSubName );
+                    if( pTreeSubItem->text( 0 ) == "Pause" ){
+                        task = tlData::enuBreak;
+                    }
+                    else{
+                        task = tlData::enuProject;
+                        TaskName = pTreeSubItem->text( 0 );
+                        TaskSubName = pTreeSubItem->text( 1 );
+                    }
+
+                    strT = pTreeSubItem->text( 2 );
+
+                   // pData->AddTime( day, tlData::, task, TaskName, TaskSubName );
                 }
                 else{          // modified item
                 }
