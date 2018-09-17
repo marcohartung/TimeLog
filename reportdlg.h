@@ -3,7 +3,6 @@
 
 #include <QDialog>
 #include "tlData.h"
-#include "edittaskdlg.h"
 
 namespace Ui {
 class ReportDlg;
@@ -22,16 +21,10 @@ public:
 private:
     Ui::ReportDlg *ui;
 
-    EditTaskDlg* etskdlg;
     tlData* pData;
 
 private slots:
     void UpdateView( );
-   // void ShowContextMenu( const QPoint &pos );
-
-    void EditData( );
-    void AddData();
-
 };
 
 #endif // REPORTDLG_H

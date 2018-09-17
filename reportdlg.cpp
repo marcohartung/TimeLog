@@ -9,7 +9,6 @@ ReportDlg::ReportDlg(QWidget *parent) :
     ui->setupUi(this);
 
     pData = 0;
-    etskdlg = 0;
 
     const QDate today( QDate::currentDate() );
     ui->deDateStart->setDate( QDate( today.year(), today.month(), 1 ) );
@@ -20,9 +19,7 @@ ReportDlg::ReportDlg(QWidget *parent) :
     HeaderLabel.push_back( "Datum" );
     HeaderLabel.push_back( "Zeit" );
     ui->twOverview->setHeaderLabels( HeaderLabel );
-    //ui->twOverview->setContextMenuPolicy( Qt::CustomContextMenu );
 
-    connect( ui->twOverview, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ShowContextMenu(const QPoint &)));
     connect( ui->deDateStart, SIGNAL(editingFinished()), this, SLOT(UpdateView()) );
     connect( ui->deDateEnd, SIGNAL(editingFinished()), this, SLOT(UpdateView()) );
 }
@@ -53,7 +50,6 @@ void ReportDlg::UpdateView( ){
                 pTreeItem = new QTreeWidgetItem;
                 pTreeItem->setText( 0, date.toString() );
                 pTreeItem->setText( 1, tlTools::formatWorkTime( ws.TimeWork_sec ) );
-                //pTreeItem->setData( 0, Qt::UserRole, QVariant( date ) );
 
                 pTreeSubItem = new QTreeWidgetItem;
                 pTreeSubItem->setText( 0, "Pause" );
@@ -94,43 +90,4 @@ void ReportDlg::UpdateView( ){
             ui->teSummery->setText( WorkInfo );
         }
     }
-}
-
-
-//void ReportDlg::ShowContextMenu( const QPoint &pos )
-//{
-//    // for most widgets
-//    // QPoint globalPos = myWidget->mapToGlobal(pos);
-//    // for QAbstractScrollArea and derived classes you would use:
-//    QPoint globalPos = ui->twOverview->viewport()->mapToGlobal(pos);
-//    QMenu contextMenu(tr("Context menu"), this);
-
-//    QAction action_edit("Bearbeiten", this);
-//    connect(&action_edit, SIGNAL(triggered()), this, SLOT(EditData()));
-//    contextMenu.addAction(&action_edit);
-
-//    QAction action_add("Hinzufügen", this);
-//    connect(&action_add, SIGNAL(triggered()), this, SLOT(AddData()));
-//    contextMenu.addAction(&action_add);
-
-//    contextMenu.exec( globalPos );
-//}
-
-void ReportDlg::EditData( )
-{
-    if( etskdlg == 0 ){
-        etskdlg = new EditTaskDlg( this );
-    }
-
-    etskdlg->exec();
-}
-
-void ReportDlg::AddData()
-{
-
-    if( etskdlg == 0 ){
-        etskdlg = new EditTaskDlg( this );
-    }
-
-    etskdlg->exec();
 }

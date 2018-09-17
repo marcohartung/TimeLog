@@ -19,7 +19,6 @@ SOURCES += main.cpp\
     configdlg.cpp \
     reportdlg.cpp \
     tltools.cpp \
-    edittaskdlg.cpp \
     dayviewdlg.cpp
 
 HEADERS  += mainwindow.h \
@@ -28,13 +27,11 @@ HEADERS  += mainwindow.h \
     configdlg.h \
     reportdlg.h \
     tltools.h \
-    edittaskdlg.h \
     dayviewdlg.h
 
 FORMS    += mainwindow.ui \
     configdlg.ui \
     reportdlg.ui \
-    edittaskdlg.ui \
     dayviewdlg.ui
 
 RESOURCES += \
