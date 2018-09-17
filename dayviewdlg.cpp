@@ -24,10 +24,12 @@ DayViewDlg::DayViewDlg(QWidget *parent) :
     connect( ui->pbPrevDay, SIGNAL(clicked()), ui->deDispDay, SLOT(stepDown()) );
     connect( ui->deDispDay, SIGNAL(editingFinished()), this, SLOT(UpdateView()) );
     connect( ui->twDayContent, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ShowContextMenu(const QPoint &)));
+    connect( ui->twDayContent, SIGNAL(itemChanged(QTreeWidgetItem *item, int column)), this, SLOT(on_twDayContent_itemChanged(QTreeWidgetItem*,int)));
 
     ui->deDispDay->setWrapping( true );
     ui->deDispDay->setDate( QDate::currentDate() );
 
+    ui->twDayContent->blockSignals(true);
     //ui->twDayContent->setColumnCount( 2 );
     QStringList HeaderLabel;
     HeaderLabel.push_back( "Task/Project" );
@@ -38,6 +40,7 @@ DayViewDlg::DayViewDlg(QWidget *parent) :
     ui->twDayContent->setHeaderLabels( HeaderLabel );
     ui->twDayContent->setContextMenuPolicy( Qt::CustomContextMenu );
     ui->twDayContent->setSelectionMode( QAbstractItemView::SingleSelection );
+    ui->twDayContent->blockSignals(false);
 }
 
 DayViewDlg::~DayViewDlg()
@@ -56,6 +59,8 @@ void DayViewDlg::accept(){
     int cchild;
     QTreeWidgetItem* pTreeItem;
     QTreeWidgetItem* pTreeSubItem;
+
+    ui->twDayContent->blockSignals(true);
     for( int i = 0; i < tlic; i++ ){
         pTreeItem = ui->twDayContent->topLevelItem( i );
 
@@ -92,7 +97,7 @@ void DayViewDlg::accept(){
             pTreeSubItem->setFlags( pTreeSubItem->flags() & ~Qt::ItemIsEditable );
         }
     }
-
+    ui->twDayContent->blockSignals(false);
     this->setResult( QDialog::Accepted );
     this->close();
 }
@@ -103,6 +108,7 @@ void DayViewDlg::rejected(){
 
 void DayViewDlg::UpdateView( ){
 
+    ui->twDayContent->blockSignals(true);
     ui->twDayContent->clear();
     day.setDate( -1, -1 ,-1 );
 
@@ -162,6 +168,8 @@ void DayViewDlg::UpdateView( ){
 //            ui->cbAddProj->addItem( projecsts[i].Name );
 //        }
     }
+
+    ui->twDayContent->blockSignals(false);
 }
 
 void DayViewDlg::ShowContextMenu( const QPoint &pos )
@@ -179,14 +187,16 @@ void DayViewDlg::ShowContextMenu( const QPoint &pos )
 
 void DayViewDlg::EditData(  ){
     QPoint pos = ui->twDayContent->viewport()->mapFromGlobal( cmDayContent->pos() );
-    //QModelIndex index = ui->twDayContent->indexAt( pos );
+    ui->twDayContent->blockSignals(true);
     QTreeWidgetItem* pTreeItem =  ui->twDayContent->itemAt( pos );
     pTreeItem->setFlags( pTreeItem->flags() | Qt::ItemIsEditable);
     ui->twDayContent->editItem( pTreeItem, ui->twDayContent->columnAt( pos.x() ) );
+    ui->twDayContent->blockSignals(false);
 }
 
 void DayViewDlg::AddData(  ){
 
+    ui->twDayContent->blockSignals(true);
     if( ui->twDayContent->topLevelItemCount() <= 0 ){
         QTreeWidgetItem* pTreeItem = new QTreeWidgetItem;
         QTime t;
@@ -210,4 +220,31 @@ void DayViewDlg::AddData(  ){
     pTreeSubItem->setFlags( pTreeSubItem->flags() | Qt::ItemIsEditable);
     ui->twDayContent->topLevelItem( 0 )->addChild( pTreeSubItem );
     ui->twDayContent->editItem( pTreeSubItem, 0 );
+    ui->twDayContent->blockSignals(false);
+}
+
+void DayViewDlg::on_twDayContent_itemChanged( QTreeWidgetItem *item, int column )
+{
+    if( column == 2 || column == 3 || column == 4 ){
+
+        QString strT = "--";
+        QString strItem;
+        QStringList strParts;
+        QTime timeT;
+
+        if( !item->text(column).isEmpty() ){
+            strItem = item->text(column);
+            strItem.remove( " " );
+            strItem.replace( 'h', ':' );
+            strParts = strItem.split( ':' );
+            while( strParts.count() < 3 ) strParts.push_back( "0" );
+            timeT.setHMS( strParts[0].toInt() , strParts[1].toInt() , strParts[2].toInt() );
+            if( timeT.isValid() ){
+                strT = timeT.toString();
+            }
+        }
+        ui->twDayContent->blockSignals(true);
+        item->setText( column, strT );
+        ui->twDayContent->blockSignals(false);
+    }
 }

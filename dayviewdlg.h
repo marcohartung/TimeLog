@@ -5,6 +5,8 @@
 #include <QMenu>
 #include "tlData.h"
 
+class QTreeWidgetItem;
+
 namespace Ui {
 class DayViewDlg;
 }
@@ -32,6 +34,7 @@ private:
     void accept();
     void rejected();
     void UpdateView( );
+    void on_twDayContent_itemChanged( QTreeWidgetItem *item, int column );
     void ShowContextMenu( const QPoint &pos );
     void AddData( );
     void EditData( );
