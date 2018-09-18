@@ -59,6 +59,7 @@ void DayViewDlg::accept(){
     int cchild;
     QTreeWidgetItem* pTreeItem;
     QTreeWidgetItem* pTreeSubItem;
+    bool fault_occurred = false, item_ok;
 
     ui->twDayContent->blockSignals(true);
     for( int i = 0; i < tlic; i++ ){
@@ -70,13 +71,13 @@ void DayViewDlg::accept(){
 
             if( pTreeSubItem->flags() & Qt::ItemIsEditable ){
                 qint64 id = pTreeSubItem->data( 0, Qt::UserRole ).toLongLong();
+                item_ok = true;
                 if( id == 0 ){ // new item
 
-                    tlData::TimeType_t type;
                     tlData::TimeTask_t task;
                     QString TaskName;
                     QString TaskSubName;
-                    QString strT;
+                    QTime StartTime, EndTime, Span;
 
                     if( pTreeSubItem->text( 0 ) == "Pause" ){
                         task = tlData::enuBreak;
@@ -87,19 +88,57 @@ void DayViewDlg::accept(){
                         TaskSubName = pTreeSubItem->text( 1 );
                     }
 
-                    strT = pTreeSubItem->text( 2 );
+                    StartTime = tlTools::StringToTime( pTreeSubItem->text( 3 ) );
+                    EndTime = tlTools::StringToTime( pTreeSubItem->text( 4 ) );
+                    Span = tlTools::StringToTime( pTreeSubItem->text( 2 ) );
+                    if( StartTime.isValid() && EndTime.isValid() ){
+                        if( EndTime.msecsSinceStartOfDay() > StartTime.msecsSinceStartOfDay() ){
+                            pData->AddTime( day, StartTime, tlData::enuStart, task, TaskName, TaskSubName );
+                            pData->AddTime( day, EndTime, tlData::enuStop, task, TaskName, TaskSubName );
+                        }
+                        else{
+                            item_ok = false;
+                            pTreeSubItem->setTextColor( 3, QColor(255,0,0,255) );
+                            pTreeSubItem->setTextColor( 4, QColor(255,0,0,255) );
+                        }
+                    }
+                    else if( Span.isValid() ){
+                        int secs = Span.msecsSinceStartOfDay() / 1000;
+                        if( secs > 0 && secs < (24*60*60) ){
+                            pData->AddTime( day, Span, tlData::enuSpan, task, TaskName, TaskSubName );
+                        }
+                        else{
+                            item_ok = false;
+                            pTreeSubItem->setTextColor( 2, QColor(255,0,0,255) );
+                        }
 
-                   // pData->AddTime( day, tlData::, task, TaskName, TaskSubName );
+                    }
+                    else{
+                        item_ok = false;
+                        pTreeSubItem->setTextColor( 2, QColor(255,0,0,255) );
+                        pTreeSubItem->setTextColor( 3, QColor(255,0,0,255) );
+                        pTreeSubItem->setTextColor( 4, QColor(255,0,0,255) );
+                    }
                 }
                 else{          // modified item
+                    // TODO
+                }
+
+                if( item_ok ){
+                    pTreeSubItem->setFlags( pTreeSubItem->flags() & ~Qt::ItemIsEditable );
+                }
+                else{
+                    fault_occurred = true;
                 }
             }
-            pTreeSubItem->setFlags( pTreeSubItem->flags() & ~Qt::ItemIsEditable );
         }
     }
     ui->twDayContent->blockSignals(false);
-    this->setResult( QDialog::Accepted );
-    this->close();
+    ui->twDayContent->clearSelection();
+    if( !fault_occurred ){
+        this->setResult( QDialog::Accepted );
+        this->close();
+    }
 }
 
 void DayViewDlg::rejected(){
@@ -228,17 +267,10 @@ void DayViewDlg::on_twDayContent_itemChanged( QTreeWidgetItem *item, int column 
     if( column == 2 || column == 3 || column == 4 ){
 
         QString strT = "--";
-        QString strItem;
-        QStringList strParts;
         QTime timeT;
 
         if( !item->text(column).isEmpty() ){
-            strItem = item->text(column);
-            strItem.remove( " " );
-            strItem.replace( 'h', ':' );
-            strParts = strItem.split( ':' );
-            while( strParts.count() < 3 ) strParts.push_back( "0" );
-            timeT.setHMS( strParts[0].toInt() , strParts[1].toInt() , strParts[2].toInt() );
+            timeT = tlTools::StringToTime( item->text(column) );
             if( timeT.isValid() ){
                 strT = timeT.toString();
             }
