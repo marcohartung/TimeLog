@@ -10,6 +10,8 @@ class tlData
 {
 public:
 
+    static const QTime invalidTime;
+
     enum TimeType_t {
         enuStart,
         enuStop,
@@ -73,6 +75,10 @@ public:
                   TimeType_t type, TimeTask_t task,
                   QString TaskName = "" , QString TaskSubName = "" );
 
+    bool AddWorkTask( QDate date, tlData::worktask_t task );
+
+    bool UpdateWorkTask( worktask_t task );
+
     bool AddProject( const QString projName );
     bool DelProject( const QString projName );
     QVector<project_t>& GetProjectList( void );
@@ -86,8 +92,6 @@ public:
 protected:
 
 private:
-
-    static const QTime invalidTime;
 
     qint64 nextDayId;
     qint64 nextWorkTimeId;

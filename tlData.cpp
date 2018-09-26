@@ -315,6 +315,56 @@ bool tlData::AddTime( QDate date, QTime time,
     return true;
 }
 
+bool tlData::AddWorkTask( QDate date, tlData::worktask_t task ){
+    bool ret = false;
+
+    if( task.timeStart != invalidTime && task.timeStop != invalidTime ){
+        if( task.timeStop.msecsSinceStartOfDay() > task.timeStart.msecsSinceStartOfDay() ){
+            ret = AddTime( date, task.timeStart, tlData::enuStart, task.task, task.TaskName, task.TaskSubName );
+            if( ret ){
+                ret = AddTime( date, task.timeStop, tlData::enuStop, task.task, task.TaskName, task.TaskSubName );
+            }
+        }
+    }
+    else if( task.timeSpan > 0 && task.timeSpan < (24*60*60) ){
+        QTime Span = QTime(0,0,0).addSecs( task.timeSpan );
+        ret = AddTime( date, Span, tlData::enuSpan, task.task, task.TaskName, task.TaskSubName );
+    }
+    return ret;
+}
+
+bool tlData::UpdateWorkTask( tlData::worktask_t task ){
+    bool ret = false;
+    bool found = false;
+    QVector<workday_t>::iterator i_day;
+    QVector<worktime_t>::iterator i_times;
+    QVector<worktask_t>::iterator i_tasks;
+
+    for( i_day = days.begin(); i_day < days.end(); i_day++ ){
+        for( i_times = i_day->times.begin(); i_times < i_day->times.end(); i_times++ ){
+            for( i_tasks = i_times->tasks.begin(); i_tasks < i_times->tasks.end(); i_tasks++ ){
+                if( i_tasks->id == task.id ){
+                    break;
+                    found = true;
+                }
+            }
+        }
+    }
+
+    if( found ){
+        i_tasks->task = task.task;
+        i_tasks->timeStart = task.timeStart;
+        i_tasks->timeStop = task.timeStop;
+        i_tasks->timeSpan = task.timeSpan;
+        i_tasks->TaskName = task.TaskName;
+        i_tasks->TaskSubName = task.TaskSubName;
+        fModified = true;
+        ret = true;
+    }
+
+    return ret;
+}
+
 bool tlData::AddProject( const QString projName ){
     bool ret = false;
     QVector<project_t>::iterator i;

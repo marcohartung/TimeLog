@@ -71,60 +71,69 @@ void DayViewDlg::accept(){
 
             if( pTreeSubItem->flags() & Qt::ItemIsEditable ){
                 qint64 id = pTreeSubItem->data( 0, Qt::UserRole ).toLongLong();
-                item_ok = true;
-                if( id == 0 ){ // new item
 
-                    tlData::TimeTask_t task;
-                    QString TaskName;
-                    QString TaskSubName;
-                    QTime StartTime, EndTime, Span;
+                // check item
+                item_ok = false;
+                tlData::worktask_t taskdata;
+                QTime StartTime, EndTime, Span;
 
-                    if( pTreeSubItem->text( 0 ) == "Pause" ){
-                        task = tlData::enuBreak;
+                taskdata.id = id;
+                if( pTreeSubItem->text( 0 ) == "Pause" ){
+                    taskdata.task = tlData::enuBreak;
+                }
+                else{
+                    taskdata.task = tlData::enuProject;
+                    taskdata.TaskName = pTreeSubItem->text( 0 );
+                    taskdata.TaskSubName = pTreeSubItem->text( 1 );
+                }
+
+                StartTime = tlTools::StringToTime( pTreeSubItem->text( 3 ) );
+                EndTime = tlTools::StringToTime( pTreeSubItem->text( 4 ) );
+                Span = tlTools::StringToTime( pTreeSubItem->text( 2 ) );
+                if( StartTime.isValid() && EndTime.isValid() ){
+                    if( EndTime.msecsSinceStartOfDay() > StartTime.msecsSinceStartOfDay() ){
+                        taskdata.timeSpan = -1;
+                        taskdata.timeStart = StartTime;
+                        taskdata.timeStop = EndTime;
+                        item_ok = true;
                     }
                     else{
-                        task = tlData::enuProject;
-                        TaskName = pTreeSubItem->text( 0 );
-                        TaskSubName = pTreeSubItem->text( 1 );
-                    }
-
-                    StartTime = tlTools::StringToTime( pTreeSubItem->text( 3 ) );
-                    EndTime = tlTools::StringToTime( pTreeSubItem->text( 4 ) );
-                    Span = tlTools::StringToTime( pTreeSubItem->text( 2 ) );
-                    if( StartTime.isValid() && EndTime.isValid() ){
-                        if( EndTime.msecsSinceStartOfDay() > StartTime.msecsSinceStartOfDay() ){
-                            pData->AddTime( day, StartTime, tlData::enuStart, task, TaskName, TaskSubName );
-                            pData->AddTime( day, EndTime, tlData::enuStop, task, TaskName, TaskSubName );
-                        }
-                        else{
-                            item_ok = false;
-                            pTreeSubItem->setTextColor( 3, QColor(255,0,0,255) );
-                            pTreeSubItem->setTextColor( 4, QColor(255,0,0,255) );
-                        }
-                    }
-                    else if( Span.isValid() ){
-                        int secs = Span.msecsSinceStartOfDay() / 1000;
-                        if( secs > 0 && secs < (24*60*60) ){
-                            pData->AddTime( day, Span, tlData::enuSpan, task, TaskName, TaskSubName );
-                        }
-                        else{
-                            item_ok = false;
-                            pTreeSubItem->setTextColor( 2, QColor(255,0,0,255) );
-                        }
-
-                    }
-                    else{
-                        item_ok = false;
-                        pTreeSubItem->setTextColor( 2, QColor(255,0,0,255) );
                         pTreeSubItem->setTextColor( 3, QColor(255,0,0,255) );
                         pTreeSubItem->setTextColor( 4, QColor(255,0,0,255) );
                     }
                 }
-                else{          // modified item
-                    // TODO
+                else if( Span.isValid() ){
+                    int secs = Span.msecsSinceStartOfDay() / 1000;
+                    if( secs > 0 && secs < (24*60*60) ){
+                        taskdata.timeSpan = secs;
+                        taskdata.timeStart = tlData::invalidTime;
+                        taskdata.timeStop = tlData::invalidTime;
+                        item_ok = true;
+                    }
+                    else{
+                        pTreeSubItem->setTextColor( 2, QColor(255,0,0,255) );
+                    }
+                }
+                else{
+                    pTreeSubItem->setTextColor( 2, QColor(255,0,0,255) );
+                    pTreeSubItem->setTextColor( 3, QColor(255,0,0,255) );
+                    pTreeSubItem->setTextColor( 4, QColor(255,0,0,255) );
                 }
 
+
                 if( item_ok ){
+
+                    if( id == 0 ){  // new item
+                        if( pData->AddWorkTask( day, taskdata ) == false ){
+                            // TODO ERROR msg
+                        }
+                    }
+                    else{           // modified item
+                        if( pData->UpdateWorkTask( taskdata ) == false ){
+                            // TODO ERROR msg
+                        }
+                    }
+
                     pTreeSubItem->setFlags( pTreeSubItem->flags() & ~Qt::ItemIsEditable );
                 }
                 else{
