@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
     confdlg = 0;
     reportdlg = 0;
     dayviewdlg = 0;
+    aboutdlg = 0;
 
     settings.ReadSettings();
 
@@ -41,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect( ui->actionOptions, SIGNAL(triggered()), this, SLOT(tbSettingsClicked()) );
     connect( ui->actionReport, SIGNAL(triggered()), this, SLOT(pbOverviewClicked()) );
     connect( ui->actionDayView, SIGNAL(triggered()), this, SLOT(pbDayViewClicked()) );
+    connect( ui->actionAbout, SIGNAL(triggered()), this, SLOT(ShowAboutDlg()) );
     connect( ui->actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()) );
 
     connect( ui->pbWorkStartStop, SIGNAL(clicked()), this, SLOT(WorkStartStopClicked()) );
@@ -159,6 +161,14 @@ void MainWindow::pbDayViewClicked(){
 //        WriteDataBase( );
 //        updateDataFields();
 //    }
+}
+
+void MainWindow::ShowAboutDlg(){
+
+    if( aboutdlg == 0){
+        aboutdlg = new AboutDlg( this );
+    }
+    aboutdlg->exec();
 }
 
 //void MainWindow::trayIconClicked(QSystemTrayIcon::ActivationReason reason)

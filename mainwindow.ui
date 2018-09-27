@@ -205,7 +205,7 @@
       <x>343</x>
       <y>125</y>
       <width>155</width>
-      <height>170</height>
+      <height>203</height>
      </rect>
     </property>
     <property name="tearOffEnabled">
@@ -226,13 +226,15 @@
     <addaction name="separator"/>
     <addaction name="actionOptions"/>
     <addaction name="separator"/>
+    <addaction name="actionAbout"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <addaction name="menuMain"/>
   </widget>
   <action name="actionOptions">
    <property name="text">
-    <string>Optionen</string>
+    <string>&amp;Optionen...</string>
    </property>
   </action>
   <action name="actionasdfsadf">
@@ -252,17 +254,22 @@
   </action>
   <action name="actionQuit">
    <property name="text">
-    <string>Beenden</string>
+    <string>&amp;Beenden</string>
    </property>
   </action>
   <action name="actionReport">
    <property name="text">
-    <string>Übersicht</string>
+    <string>&amp;Übersicht...</string>
    </property>
   </action>
   <action name="actionDayView">
    <property name="text">
-    <string>Tagesansicht</string>
+    <string>&amp;Tagesansicht...</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>Über TimeLog...</string>
    </property>
   </action>
  </widget>

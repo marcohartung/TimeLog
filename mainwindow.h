@@ -7,6 +7,7 @@
 #include "configdlg.h"
 #include "reportdlg.h"
 #include "dayviewdlg.h"
+#include "aboutdlg.h"
 
 namespace Ui {
 class MainWindow;
@@ -39,6 +40,7 @@ private:
     ConfigDlg* confdlg;
     ReportDlg* reportdlg;
     DayViewDlg* dayviewdlg;
+    AboutDlg* aboutdlg;
 
     tlSettings settings;
     tlData data;
@@ -64,6 +66,7 @@ private slots:
     void tbSettingsClicked();
     void pbOverviewClicked();
     void pbDayViewClicked();
+    void ShowAboutDlg();
 //    void trayIconClicked( QSystemTrayIcon::ActivationReason );
 
     void WorkStartStopClicked();
