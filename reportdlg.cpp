@@ -11,6 +11,8 @@ ReportDlg::ReportDlg(QWidget *parent) :
     pData = 0;
 
     const QDate today( QDate::currentDate() );
+    ui->deDateStart->setCalendarPopup( true );
+    ui->deDateEnd->setCalendarPopup( true );
     ui->deDateStart->setDate( QDate( today.year(), today.month(), 1 ) );
     ui->deDateEnd->setDate( today );
 

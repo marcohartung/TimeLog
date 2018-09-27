@@ -38,17 +38,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pbBreakStartStop->setEnabled(false);
     ui->pbProjStartStop->setEnabled(false);
 
-    ui->tbSettings->setIcon( QIcon(":/resource/configure.png") );
-    connect( ui->tbSettings, SIGNAL(clicked()), this, SLOT(tbSettingsClicked()) );
-    connect( ui->pbOverview, SIGNAL(clicked()), this, SLOT(pbOverviewClicked()) );
-    connect( ui->pbDayView, SIGNAL(clicked()), this, SLOT(pbDayViewClicked()) );
-    //connect( ui->tbShowConfig, SIGNAL(clicked()), this, SLOT(hide()) );
-    //connect( closeAction, SIGNAL(triggered()), qApp, SLOT(quit()) );
+    connect( ui->actionOptions, SIGNAL(triggered()), this, SLOT(tbSettingsClicked()) );
+    connect( ui->actionReport, SIGNAL(triggered()), this, SLOT(pbOverviewClicked()) );
+    connect( ui->actionDayView, SIGNAL(triggered()), this, SLOT(pbDayViewClicked()) );
+    connect( ui->actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()) );
 
     connect( ui->pbWorkStartStop, SIGNAL(clicked()), this, SLOT(WorkStartStopClicked()) );
     connect( ui->pbBreakStartStop, SIGNAL(clicked()), this, SLOT(BreakStartStopClicked()) );
     connect( ui->pbProjStartStop, SIGNAL(clicked()), this, SLOT(ProjStartStopClicked()) );
-
 
     //connect( ui->pbImport    , SIGNAL(clicked()), this, SLOT(ImportClicked()) );
 

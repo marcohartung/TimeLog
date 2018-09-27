@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>resource/cancel.png</file>
         <file>resource/configure.png</file>
+        <file>resource/menu.png</file>
     </qresource>
 </RCC>

@@ -88,7 +88,7 @@
           </font>
          </property>
          <property name="text">
-          <string>00:00</string>
+          <string>00:00:00</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -108,7 +108,7 @@
           </font>
          </property>
          <property name="text">
-          <string>00:00</string>
+          <string>00:00:00</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -187,47 +187,6 @@
        </property>
       </spacer>
      </item>
-     <item>
-      <layout class="QHBoxLayout" name="hlSettings">
-       <item>
-        <widget class="QPushButton" name="pbOverview">
-         <property name="text">
-          <string>Übersicht</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pbDayView">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="text">
-          <string>Tagesansicht</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QToolButton" name="tbSettings">
-         <property name="text">
-          <string>...</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
     </layout>
    </widget>
   </widget>
@@ -240,9 +199,76 @@
      <height>30</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuMain">
+    <property name="geometry">
+     <rect>
+      <x>343</x>
+      <y>125</y>
+      <width>155</width>
+      <height>170</height>
+     </rect>
+    </property>
+    <property name="tearOffEnabled">
+     <bool>false</bool>
+    </property>
+    <property name="title">
+     <string>Da&amp;tei</string>
+    </property>
+    <property name="icon">
+     <iconset resource="res.qrc">
+      <normaloff>:/resource/menu.png</normaloff>:/resource/menu.png</iconset>
+    </property>
+    <property name="separatorsCollapsible">
+     <bool>false</bool>
+    </property>
+    <addaction name="actionDayView"/>
+    <addaction name="actionReport"/>
+    <addaction name="separator"/>
+    <addaction name="actionOptions"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <addaction name="menuMain"/>
   </widget>
+  <action name="actionOptions">
+   <property name="text">
+    <string>Optionen</string>
+   </property>
+  </action>
+  <action name="actionasdfsadf">
+   <property name="text">
+    <string>Tagesansicht</string>
+   </property>
+  </action>
+  <action name="actionsadfsadf">
+   <property name="text">
+    <string>sadfsadf</string>
+   </property>
+  </action>
+  <action name="actionEinstellungen">
+   <property name="text">
+    <string>Optionen</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Beenden</string>
+   </property>
+  </action>
+  <action name="actionReport">
+   <property name="text">
+    <string>Übersicht</string>
+   </property>
+  </action>
+  <action name="actionDayView">
+   <property name="text">
+    <string>Tagesansicht</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -27,6 +27,7 @@ DayViewDlg::DayViewDlg(QWidget *parent) :
     connect( ui->twDayContent, SIGNAL(itemChanged(QTreeWidgetItem *item, int column)), this, SLOT(on_twDayContent_itemChanged(QTreeWidgetItem*,int)));
 
     ui->deDispDay->setWrapping( true );
+    ui->deDispDay->setCalendarPopup( true );
     ui->deDispDay->setDate( QDate::currentDate() );
 
     ui->twDayContent->blockSignals(true);
