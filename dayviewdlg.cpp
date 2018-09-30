@@ -24,7 +24,7 @@ DayViewDlg::DayViewDlg(QWidget *parent) :
     connect( ui->pbPrevDay, SIGNAL(clicked()), ui->deDispDay, SLOT(stepDown()) );
     connect( ui->deDispDay, SIGNAL(editingFinished()), this, SLOT(UpdateView()) );
     connect( ui->twDayContent, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ShowContextMenu(const QPoint &)));
-    connect( ui->twDayContent, SIGNAL(itemChanged(QTreeWidgetItem *item, int column)), this, SLOT(on_twDayContent_itemChanged(QTreeWidgetItem*,int)));
+    connect( ui->twDayContent, SIGNAL(itemChanged(QTreeWidgetItem *, int)), this, SLOT(on_twDayContent_itemChanged(QTreeWidgetItem*,int)));
 
     ui->deDispDay->setWrapping( true );
     ui->deDispDay->setCalendarPopup( true );
