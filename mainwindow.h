@@ -73,7 +73,8 @@ private slots:
     void BreakStartStopClicked();
     void ProjStartStopClicked();
 
-    void ImportClicked();
+    void ProjImport();
+    void BmasImport();
 };
 
 #endif // MAINWINDOW_H

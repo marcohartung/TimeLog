@@ -34,6 +34,22 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
     //createTrayIcon();
 
+    // hiden import menu
+    if(0){
+        QMenu *importMenu = new QMenu( "Import", this );
+        QAction* bmasImportAction = new QAction(tr("BMAS Import"), this);
+        QAction* projImportAction = new QAction(tr("Project Import"), this);
+
+        importMenu->addAction( bmasImportAction );
+        importMenu->addAction( projImportAction );
+        ui->menuBar->addMenu( importMenu );
+
+        connect(bmasImportAction, SIGNAL(triggered()), this, SLOT(BmasImport()));
+        connect(projImportAction, SIGNAL(triggered()), this, SLOT(ProjImport()));
+    }
+
+
+
     createTimer();
 
     ui->pbBreakStartStop->setEnabled(false);
@@ -368,97 +384,94 @@ void MainWindow::ProjStartStopClicked(){
     }
 }
 
-//void MainWindow::ImportClicked(){
+void MainWindow::BmasImport(){
 
-//    // Import BMAS App Times
+    // Import BMAS App Times
 
-//    QString strFile = "/home/marco/Projekte/TimeLog/ZeitLog.txt";
-//    QFile file( strFile );
+    QString strFile = "/home/marco/Projekte/TimeLog/ZeitLog.txt";
+    QFile file( strFile );
 
-//    enum enuDecodeState_t{
-//        dsNothing,
-//        dsDateOk,
-//        dsStartOk,
-//        dsEndOk,
-//    };
+    enum enuDecodeState_t{
+        dsNothing,
+        dsDateOk,
+        dsStartOk,
+        dsEndOk,
+    };
 
-//    file.open( QIODevice::ReadOnly );
+    file.open( QIODevice::ReadOnly );
 
-//    const int64_t maxLineLength = 255;
-//    char line[maxLineLength];
-//    qint64 len;
-//    QString strLine;
-//    QStringList strParts;
-//    enuDecodeState_t ds = dsNothing;
-//    QDate date;
-//    QTime timeStart, timeEnd, timeBreak;
-//    while( ( len = file.readLine( line, maxLineLength ) ) > 0 ){
+    const int64_t maxLineLength = 255;
+    char line[maxLineLength];
+    qint64 len;
+    QString strLine;
+    QStringList strParts;
+    enuDecodeState_t ds = dsNothing;
+    QDate date;
+    QTime timeStart, timeEnd, timeBreak;
+    while( ( len = file.readLine( line, maxLineLength ) ) > 0 ){
 
-//        line[len] = '\0';
-//        strLine = line;
+        line[len] = '\0';
+        strLine = line;
 
-//        if( strLine.startsWith( "Datum:" ) ){
-//            strLine.remove( "Datum:" );
-//            strParts = strLine.split( '.' );
-//            date.setDate(  strParts[2].toInt() , strParts[1].toInt() , strParts[0].toInt() );
-//            if( date.isValid() ){
-//                ds = dsDateOk;
-//                continue;
-//            }
-//        }
+        if( strLine.startsWith( "Datum:" ) ){
+            strLine.remove( "Datum:" );
+            strParts = strLine.split( '.' );
+            date.setDate(  strParts[2].toInt() , strParts[1].toInt() , strParts[0].toInt() );
+            if( date.isValid() ){
+                ds = dsDateOk;
+                continue;
+            }
+        }
 
-//        if( ds == dsDateOk ){
-//            if( strLine.startsWith( "Arbeitsbeginn:" ) ){
-//                strLine.remove( "Arbeitsbeginn:" );
-//                strLine.remove( " " );
-//                strLine.remove( "h" );
-//                strParts = strLine.split( ':' );
-//                timeStart.setHMS( strParts[0].toInt() , strParts[1].toInt() , 0 );
-//                if( timeStart.isValid() ){
-//                    ds = dsStartOk;
-//                    continue;
-//                }
-//            }
-//        }
-//        else if( ds == dsStartOk ){
-//            if( strLine.startsWith( "Arbeitsende:" ) ){
-//                strLine.remove( "Arbeitsende:" );
-//                strLine.remove( " " );
-//                strLine.remove( "h" );
-//                strParts = strLine.split( ':' );
-//                timeEnd.setHMS( strParts[0].toInt() , strParts[1].toInt() , 0 );
-//                if( timeEnd.isValid() ){
-//                    ds = dsEndOk;
-//                    continue;
-//                }
-//            }
-//        }
-//        else if( ds == dsEndOk ){
-//            if( strLine.startsWith( "Pausendauer:" ) ){
-//                strLine.remove( "Pausendauer:" );
-//                strLine.remove( " " );
-//                strLine.remove( "h" );
-//                strParts = strLine.split( ':' );
-//                timeBreak.setHMS( strParts[0].toInt() , strParts[1].toInt() , 0 );
-//                if( timeBreak.isValid() ){
-//                    ds = dsNothing;
+        if( ds == dsDateOk ){
+            if( strLine.startsWith( "Arbeitsbeginn:" ) ){
+                strLine.remove( "Arbeitsbeginn:" );
+                strLine.remove( " " );
+                strLine.remove( "h" );
+                strParts = strLine.split( ':' );
+                timeStart.setHMS( strParts[0].toInt() , strParts[1].toInt() , 0 );
+                if( timeStart.isValid() ){
+                    ds = dsStartOk;
+                    continue;
+                }
+            }
+        }
+        else if( ds == dsStartOk ){
+            if( strLine.startsWith( "Arbeitsende:" ) ){
+                strLine.remove( "Arbeitsende:" );
+                strLine.remove( " " );
+                strLine.remove( "h" );
+                strParts = strLine.split( ':' );
+                timeEnd.setHMS( strParts[0].toInt() , strParts[1].toInt() , 0 );
+                if( timeEnd.isValid() ){
+                    ds = dsEndOk;
+                    continue;
+                }
+            }
+        }
+        else if( ds == dsEndOk ){
+            if( strLine.startsWith( "Pausendauer:" ) ){
+                strLine.remove( "Pausendauer:" );
+                strLine.remove( " " );
+                strLine.remove( "h" );
+                strParts = strLine.split( ':' );
+                timeBreak.setHMS( strParts[0].toInt() , strParts[1].toInt() , 0 );
+                if( timeBreak.isValid() ){
+                    ds = dsNothing;
 
-//                    data.AddTime( date, timeStart, tlData::enuStart, tlData::enuWork );
-//                    data.AddTime( date, timeBreak, tlData::enuSpan, tlData::enuBreak );
-//                    data.AddTime( date, timeEnd, tlData::enuStop, tlData::enuWork );
+                    data.AddTime( date, timeStart, tlData::enuStart, tlData::enuWork );
+                    data.AddTime( date, timeBreak, tlData::enuSpan, tlData::enuBreak );
+                    data.AddTime( date, timeEnd, tlData::enuStop, tlData::enuWork );
 
-//                    continue;
-//                }
-//            }
-//        }
+                    continue;
+                }
+            }
+        }
 
-//    }
-//}
+    }
+}
 
-void MainWindow::ImportClicked(){
-
-    return;
-
+void MainWindow::ProjImport(){
     // Import text-style
     // dd.mm.yyyy
     // proj,task,time in h

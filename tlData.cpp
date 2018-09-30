@@ -344,8 +344,8 @@ bool tlData::UpdateWorkTask( tlData::worktask_t task ){
         for( i_times = i_day->times.begin(); i_times < i_day->times.end(); i_times++ ){
             for( i_tasks = i_times->tasks.begin(); i_tasks < i_times->tasks.end(); i_tasks++ ){
                 if( i_tasks->id == task.id ){
-                    break;
                     found = true;
+                    break;
                 }
             }
         }
@@ -411,6 +411,10 @@ QVector<tlData::project_t>& tlData::GetProjectList( void ){
 void tlData::Clear( void ){
 
     days.clear();
+    projects.clear();
+    nextDayId = 100;
+    nextWorkTimeId = 100;
+    nextTaskId = 100;
     fModified = true;
 }
 
