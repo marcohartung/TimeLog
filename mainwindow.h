@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QSystemTrayIcon>
 #include "tlSettings.h"
 #include "tlData.h"
 #include "configdlg.h"
@@ -23,7 +24,7 @@ public:
 
 private:
     void createActions();
-//    void createTrayIcon();
+    void createTrayIcon();
     void createTimer();
 
     void closeEvent(QCloseEvent *); // Overriding the window's close event
@@ -52,11 +53,11 @@ private:
     qint64 breaktime;
     qint64 projecttime;
 
-//    QSystemTrayIcon *trayIcon;
-//    QMenu *trayIconMenu;
+    QSystemTrayIcon *trayIcon;
+    QMenu *trayIconMenu;
 
-//    QAction *configAction;
-//    QAction *closeAction;
+    QAction *configAction;
+    QAction *closeAction;
 
     QTimer *timer;
 
@@ -67,7 +68,7 @@ private slots:
     void pbOverviewClicked();
     void pbDayViewClicked();
     void ShowAboutDlg();
-//    void trayIconClicked( QSystemTrayIcon::ActivationReason );
+    void trayIconClicked( QSystemTrayIcon::ActivationReason );
 
     void WorkStartStopClicked();
     void BreakStartStopClicked();
