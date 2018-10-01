@@ -69,10 +69,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //connect( ui->pbImport    , SIGNAL(clicked()), this, SLOT(ImportClicked()) );
 
-    trayIcon->show();
-
     ReadDataBase();
     updateDataFields();
+
+     trayIcon->show();
 }
 
 MainWindow::~MainWindow()
@@ -103,7 +103,7 @@ void MainWindow::createTrayIcon()
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
 
-   // trayIcon->setIcon(QIcon(":/resource/computer.png"));
+    trayIcon->setIcon(QIcon(":/resource/clock.png"));
 
     connect( trayIcon,
              SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
