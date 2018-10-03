@@ -59,18 +59,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect( ui->actionReport, SIGNAL(triggered()), this, SLOT(pbOverviewClicked()) );
     connect( ui->actionDayView, SIGNAL(triggered()), this, SLOT(pbDayViewClicked()) );
     connect( ui->actionAbout, SIGNAL(triggered()), this, SLOT(ShowAboutDlg()) );
-    connect( ui->actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()) );
+    connect( ui->actionQuit, SIGNAL(triggered()), this, SLOT(QuitApp()) );
 
     connect( ui->pbWorkStartStop, SIGNAL(clicked()), this, SLOT(WorkStartStopClicked()) );
     connect( ui->pbBreakStartStop, SIGNAL(clicked()), this, SLOT(BreakStartStopClicked()) );
     connect( ui->pbProjStartStop, SIGNAL(clicked()), this, SLOT(ProjStartStopClicked()) );
 
-    //connect( ui->pbImport    , SIGNAL(clicked()), this, SLOT(ImportClicked()) );
-
     ReadDataBase();
     updateDataFields();
 
-     trayIcon->show();
+    trayIcon->show();
 }
 
 MainWindow::~MainWindow()
@@ -82,7 +80,7 @@ void MainWindow::createActions()
 {
     closeAction = new QAction(tr("&Quit"), this);
 //    closeAction->setIcon(QIcon(":/resource/cancel.png") );
-    connect(closeAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+    connect(closeAction, SIGNAL(triggered()), this, SLOT(QuitApp()));
 }
 
 void MainWindow::createTrayIcon()
@@ -125,6 +123,14 @@ void MainWindow::ticTimer(){
     ui->lProjTime->setText( tlTools::formatWorkTime( projecttime ) );
 }
 
+void MainWindow::QuitApp(){
+
+    WriteDataBase();
+
+    qApp->quit();
+}
+
+
 void MainWindow::tbSettingsClicked(){
 
     if( confdlg == 0){
@@ -148,11 +154,6 @@ void MainWindow::pbOverviewClicked(){
 
     reportdlg->SetData( &data );
     reportdlg->exec();
-//    if( reportdlg->exec() == QDialog::Accepted ){
-//        settings.ReadSettings();
-//        WriteDataBase( );
-//        updateDataFields();
-//    }
 }
 
 void MainWindow::pbDayViewClicked(){
@@ -163,11 +164,6 @@ void MainWindow::pbDayViewClicked(){
 
     dayviewdlg->SetData( &data );
     dayviewdlg->exec();
-//    if( reportdlg->exec() == QDialog::Accepted ){
-//        settings.ReadSettings();
-//        WriteDataBase( );
-//        updateDataFields();
-//    }
 }
 
 void MainWindow::ShowAboutDlg(){
@@ -222,11 +218,12 @@ void MainWindow::trayIconClicked( QSystemTrayIcon::ActivationReason reason )
 
 void MainWindow::closeEvent( QCloseEvent *event ){
 
-    WriteDataBase();
-
+    event->ignore(); // Don't let the event propagate to the base class
     if( trayIcon->isVisible() ){
         hide();
-        event->ignore(); // Don't let the event propagate to the base class
+    }
+    else{
+        this->QuitApp();
     }
 }
 

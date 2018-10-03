@@ -64,6 +64,8 @@ private:
 private slots:
     void ticTimer( );
 
+    void QuitApp( );
+
     void tbSettingsClicked();
     void pbOverviewClicked();
     void pbDayViewClicked();
