@@ -315,6 +315,20 @@ bool tlData::AddTime( QDate date, QTime time,
     return true;
 }
 
+bool tlData::AddWorkTime( QDate date, tlData::worktime_t worktime ){
+    bool ret = false;
+
+    if( worktime.timeStart != invalidTime && worktime.timeStop != invalidTime ){
+        if( worktime.timeStop.msecsSinceStartOfDay() > worktime.timeStart.msecsSinceStartOfDay() ){
+            ret = AddTime( date, worktime.timeStart, tlData::enuStart, tlData::enuWork );
+            if( ret ){
+                ret = AddTime( date, worktime.timeStop, tlData::enuStop, tlData::enuWork );
+            }
+        }
+    }
+    return ret;
+}
+
 bool tlData::AddWorkTask( QDate date, tlData::worktask_t task ){
     bool ret = false;
 
@@ -359,6 +373,30 @@ bool tlData::UpdateWorkTask( tlData::worktask_t task ){
         i_tasks->TaskName = task.TaskName;
         i_tasks->TaskSubName = task.TaskSubName;
         fModified = true;
+        ret = true;
+    }
+
+    return ret;
+}
+
+bool tlData::UpdateWorkTime( tlData::worktime_t worktime ){
+    bool ret = false;
+    bool found = false;
+    QVector<workday_t>::iterator i_day;
+    QVector<worktime_t>::iterator i_times;
+
+    for( i_day = days.begin(); i_day < days.end(); i_day++ ){
+        for( i_times = i_day->times.begin(); i_times < i_day->times.end(); i_times++ ){
+            if( i_times->id == worktime.id ){
+                found = true;
+                break;
+            }
+        }
+    }
+
+    if( found ){
+        i_times->timeStart = worktime.timeStart;
+        i_times->timeStop = worktime.timeStop;
         ret = true;
     }
 

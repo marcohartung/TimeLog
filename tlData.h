@@ -75,8 +75,10 @@ public:
                   TimeType_t type, TimeTask_t task,
                   QString TaskName = "" , QString TaskSubName = "" );
 
+    bool AddWorkTime( QDate date, tlData::worktime_t worktime );
     bool AddWorkTask( QDate date, tlData::worktask_t task );
 
+    bool UpdateWorkTime( worktime_t worktime );
     bool UpdateWorkTask( worktask_t task );
 
     bool AddProject( const QString projName );

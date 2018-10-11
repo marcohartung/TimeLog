@@ -66,6 +66,46 @@ void DayViewDlg::accept(){
     for( int i = 0; i < tlic; i++ ){
         pTreeItem = ui->twDayContent->topLevelItem( i );
 
+
+        if( pTreeItem->flags() & Qt::ItemIsEditable ){
+            tlData::worktime_t worktime;
+            QTime StartTime, EndTime;
+            item_ok = false;
+
+            worktime.id = pTreeItem->data( 0, Qt::UserRole ).toLongLong();
+            StartTime = tlTools::StringToTime( pTreeItem->text( 3 ) );
+            EndTime = tlTools::StringToTime( pTreeItem->text( 4 ) );
+            if( StartTime.isValid() && EndTime.isValid() ){
+                if( EndTime.msecsSinceStartOfDay() > StartTime.msecsSinceStartOfDay() ){
+                    worktime.timeStart = StartTime;
+                    worktime.timeStop = EndTime;
+                    item_ok = true;
+                }
+                else{
+                    pTreeItem->setTextColor( 3, QColor(255,0,0,255) );
+                    pTreeItem->setTextColor( 4, QColor(255,0,0,255) );
+                }
+            }
+            if( item_ok ){
+
+                if( worktime.id  == 0 ){  // new item
+                    if( pData->AddWorkTime( day, worktime ) == false ){
+                        // TODO ERROR msg
+                    }
+                }
+                else{           // modified item
+                    if( pData->UpdateWorkTime( worktime ) == false ){
+                        // TODO ERROR msg
+                    }
+                }
+                pTreeItem->setFlags( pTreeItem->flags() & ~Qt::ItemIsEditable );
+            }
+            else{
+                fault_occurred = true;
+            }
+        }
+
+
         cchild = pTreeItem->childCount();
         for( int ii = 0; ii < cchild; ii++ ){
             pTreeSubItem = pTreeItem->child( ii );
@@ -167,11 +207,11 @@ void DayViewDlg::UpdateView( ){
         QVector<tlData::worktime_t>::iterator i;
         QVector<tlData::worktask_t>::iterator ii;
 
-        QVector<tlData::worktime_t> workday = pData->GetWorktimesOfDay( ui->deDispDay->date() );
+        day = ui->deDispDay->date();
+        QVector<tlData::worktime_t> workday = pData->GetWorktimesOfDay( day );
 
         if( !workday.empty() ){
 
-            day = ui->deDispDay->date();
             for( i = workday.begin(); i < workday.end(); i++ ){
                 pTreeItem = new QTreeWidgetItem;
 
@@ -230,8 +270,12 @@ void DayViewDlg::ShowContextMenu( const QPoint &pos )
 
     QModelIndex index = ui->twDayContent->indexAt(pos);
     if( index.isValid() ){
-         cmDayContent->exec( globalPos );
+        cmaDayContentEdit->setDisabled( false );
     }
+    else{
+        cmaDayContentEdit->setDisabled( true );
+    }
+    cmDayContent->exec( globalPos );
 }
 
 void DayViewDlg::EditData(  ){
@@ -248,27 +292,28 @@ void DayViewDlg::AddData(  ){
     ui->twDayContent->blockSignals(true);
     if( ui->twDayContent->topLevelItemCount() <= 0 ){
         QTreeWidgetItem* pTreeItem = new QTreeWidgetItem;
-        QTime t;
+        pTreeItem->setData( 0, Qt::UserRole, QVariant( 0 ) );
         pTreeItem->setText( 0, "" );
         pTreeItem->setText( 1, "" );
         pTreeItem->setText( 2, tlTools::formatWorkTime( 0 ) );
-        pTreeItem->setText( 3, t.toString()  );
-        pTreeItem->setText( 4, t.toString() );
+        pTreeItem->setText( 3, tlTools::formatWorkTime( 0 )  );
+        pTreeItem->setText( 4, tlTools::formatWorkTime( 0 ) );
+        pTreeItem->setFlags( pTreeItem->flags() | Qt::ItemIsEditable);
         ui->twDayContent->addTopLevelItem( pTreeItem );
+        ui->twDayContent->editItem( pTreeItem, 3 );
     }
-
-    QTreeWidgetItem* pTreeSubItem;
-    pTreeSubItem = new QTreeWidgetItem;
-
-    pTreeSubItem->setText( 0, "proj" );
-    pTreeSubItem->setText( 1, "arg" );
-    pTreeSubItem->setText( 2, "0:00" );
-    pTreeSubItem->setText( 3, "--" );
-    pTreeSubItem->setText( 4, "--" );
-
-    pTreeSubItem->setFlags( pTreeSubItem->flags() | Qt::ItemIsEditable);
-    ui->twDayContent->topLevelItem( 0 )->addChild( pTreeSubItem );
-    ui->twDayContent->editItem( pTreeSubItem, 0 );
+    else{
+        QTreeWidgetItem* pTreeSubItem = new QTreeWidgetItem;
+         pTreeSubItem->setData( 0, Qt::UserRole, QVariant( 0 ) );
+        pTreeSubItem->setText( 0, "Project" );
+        pTreeSubItem->setText( 1, "" );
+        pTreeSubItem->setText( 2, tlTools::formatWorkTime( 0 )  );
+        pTreeSubItem->setText( 3, "--" );
+        pTreeSubItem->setText( 4, "--" );
+        pTreeSubItem->setFlags( pTreeSubItem->flags() | Qt::ItemIsEditable);
+        ui->twDayContent->topLevelItem( 0 )->addChild( pTreeSubItem );
+        ui->twDayContent->editItem( pTreeSubItem, 0 );
+    }
     ui->twDayContent->blockSignals(false);
 }
 
