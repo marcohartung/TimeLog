@@ -5,7 +5,7 @@
 #include <QtCore/QVariant>
 
 DayViewDlg::DayViewDlg(QWidget *parent) :
-    QDialog(parent),
+    QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint ),
     ui(new Ui::DayViewDlg)
 {
     ui->setupUi(this);

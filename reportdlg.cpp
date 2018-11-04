@@ -3,7 +3,7 @@
 #include "tltools.h"
 
 ReportDlg::ReportDlg(QWidget *parent) :
-    QDialog(parent),
+    QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint ),
     ui(new Ui::ReportDlg)
 {
     ui->setupUi(this);

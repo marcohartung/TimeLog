@@ -4,7 +4,7 @@
 
 
 ConfigDlg::ConfigDlg(QWidget *parent) :
-    QDialog(parent),
+    QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint ),
     ui(new Ui::ConfigDlg)
 {
     ui->setupUi(this);
