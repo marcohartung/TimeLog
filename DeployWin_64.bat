@@ -1,5 +1,5 @@
-# Create zip file with .exe and all dlls for deployment
-# Marco Hartung 06.09.2018
+rem Create zip file with .exe and all dlls for deployment
+rem Marco Hartung 06.09.2018
 
 cd..
 if not exist "build" mkdir build
