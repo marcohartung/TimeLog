@@ -123,6 +123,32 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QGroupBox" name="groupBox_3">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>180</y>
+     <width>521</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Misc</string>
+   </property>
+   <widget class="QCheckBox" name="cbLogWorkTimeWithApp">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>361</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Arbeits Erfassung mit Program starten und beenden</string>
+    </property>
+   </widget>
+  </widget>
  </widget>
  <resources/>
  <connections>

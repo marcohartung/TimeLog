@@ -68,6 +68,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ReadDataBase();
     updateDataFields();
 
+    if( settings.LogWorkTimeWithApp() ){
+       WorkStartStopClicked();
+    }
+
     trayIcon->show();
 }
 
@@ -124,6 +128,10 @@ void MainWindow::ticTimer(){
 }
 
 void MainWindow::QuitApp(){
+
+    if( settings.LogWorkTimeWithApp() && f_working ){
+       WorkStartStopClicked();
+    }
 
     WriteDataBase();
 

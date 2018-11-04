@@ -19,6 +19,7 @@ ConfigDlg::ConfigDlg(QWidget *parent) :
     settings.ReadSettings();
 
     ui->leDataPath->setText( settings.DataPath() );
+    ui->cbLogWorkTimeWithApp->setChecked( settings.LogWorkTimeWithApp() );
 }
 
 ConfigDlg::~ConfigDlg()
@@ -33,7 +34,7 @@ void ConfigDlg::SetData( tlData* pd ){
 
     if( pData ){
         QVector<tlData::project_t> projecsts = pData->GetProjectList();
-        for( size_t i = 0; i < projecsts.size(); i++ ){
+        for( int i = 0; i < projecsts.size(); i++ ){
             ui->cbProj->addItem( projecsts[i].Name );
         }
     }
@@ -41,6 +42,9 @@ void ConfigDlg::SetData( tlData* pd ){
 }
 
 void ConfigDlg::accept(){
+
+    settings.SetLogWorkTimeWithApp( ui->cbLogWorkTimeWithApp->isChecked() );
+
     settings.SaveSettings();
     this->setResult( QDialog::Accepted );
     this->close();

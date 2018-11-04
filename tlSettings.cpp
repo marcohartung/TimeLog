@@ -12,6 +12,7 @@ bool tlSettings::ReadSettings( void )
     QSettings settings;
 
     strDataPath = settings.value( "DataPath", QDir::homePath() + "/.TimeLog/UserData/TimeLogData.xml" ).toString();
+    fLogWorkTimeWithApp = settings.value( "LogWorkTimeWithApp", false ).toBool();
 
     return true;
 }
@@ -21,6 +22,7 @@ bool tlSettings::SaveSettings( void )
     QSettings settings;
 
     settings.setValue( "DataPath", strDataPath );
+    settings.setValue( "LogWorkTimeWithApp", fLogWorkTimeWithApp );
 
     return true;
 }
