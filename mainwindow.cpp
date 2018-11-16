@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect( ui->actionReport, SIGNAL(triggered()), this, SLOT(pbOverviewClicked()) );
     connect( ui->actionDayView, SIGNAL(triggered()), this, SLOT(pbDayViewClicked()) );
     connect( ui->actionAbout, SIGNAL(triggered()), this, SLOT(ShowAboutDlg()) );
-    connect( ui->actionQuit, SIGNAL(triggered()), this, SLOT(QuitApp()) );
+    connect( ui->actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()) );
 
     connect( ui->pbWorkStartStop, SIGNAL(clicked()), this, SLOT(WorkStartStopClicked()) );
     connect( ui->pbBreakStartStop, SIGNAL(clicked()), this, SLOT(BreakStartStopClicked()) );
@@ -82,9 +82,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::createActions()
 {
-    closeAction = new QAction(tr("&Quit"), this);
+    closeAction = new QAction(tr("&Beenden"), this);
 //    closeAction->setIcon(QIcon(":/resource/cancel.png") );
-    connect(closeAction, SIGNAL(triggered()), this, SLOT(QuitApp()));
+    connect(closeAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 }
 
 void MainWindow::createTrayIcon()
@@ -127,7 +127,7 @@ void MainWindow::ticTimer(){
     ui->lProjTime->setText( tlTools::formatWorkTime( projecttime ) );
 }
 
-void MainWindow::QuitApp(){
+void MainWindow::AboutToQuitSignaled(){
 
     if( settings.LogWorkTimeWithApp() && f_working ){
        WorkStartStopClicked();
@@ -135,9 +135,7 @@ void MainWindow::QuitApp(){
 
     WriteDataBase();
 
-    qApp->quit();
 }
-
 
 void MainWindow::tbSettingsClicked(){
 
@@ -226,12 +224,9 @@ void MainWindow::trayIconClicked( QSystemTrayIcon::ActivationReason reason )
 
 void MainWindow::closeEvent( QCloseEvent *event ){
 
-    event->ignore(); // Don't let the event propagate to the base class
     if( trayIcon->isVisible() ){
         hide();
-    }
-    else{
-        this->QuitApp();
+         event->ignore(); // Don't let the event propagate to the base class
     }
 }
 
