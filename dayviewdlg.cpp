@@ -20,9 +20,9 @@ DayViewDlg::DayViewDlg(QWidget *parent) :
 
     connect(cmaDayContentEdit, SIGNAL(triggered()), this, SLOT(EditData()));
     connect(cmaDayContentAdd, SIGNAL(triggered()), this, SLOT(AddData()));
-    connect( ui->pbNextDay, SIGNAL(clicked()), ui->deDispDay, SLOT(stepUp()) );
-    connect( ui->pbPrevDay, SIGNAL(clicked()), ui->deDispDay, SLOT(stepDown()) );
-    connect( ui->deDispDay, SIGNAL(editingFinished()), this, SLOT(UpdateView()) );
+    connect( ui->pbNextDay, SIGNAL(clicked()), this, SLOT(on_NextDay_clicked()) );
+    connect( ui->pbPrevDay, SIGNAL(clicked()), this, SLOT(on_PrevDay_clicked()) );
+    connect( ui->deDispDay, SIGNAL(dateChanged()), this, SLOT(UpdateView()) );
     connect( ui->twDayContent, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ShowContextMenu(const QPoint &)));
     connect( ui->twDayContent, SIGNAL(itemChanged(QTreeWidgetItem *, int)), this, SLOT(on_twDayContent_itemChanged(QTreeWidgetItem*,int)));
 
@@ -54,7 +54,7 @@ void DayViewDlg::SetData( tlData* pd ){
     UpdateView();
 }
 
-void DayViewDlg::accept(){
+bool DayViewDlg::WriteViewToDB( void ){
 
     int tlic = ui->twDayContent->topLevelItemCount();
     int cchild;
@@ -185,7 +185,13 @@ void DayViewDlg::accept(){
     }
     ui->twDayContent->blockSignals(false);
     ui->twDayContent->clearSelection();
-    if( !fault_occurred ){
+
+    return !fault_occurred;
+}
+
+void DayViewDlg::accept(){
+
+    if( WriteViewToDB() == true ){
         this->setResult( QDialog::Accepted );
         this->close();
     }
@@ -193,6 +199,22 @@ void DayViewDlg::accept(){
 
 void DayViewDlg::rejected(){
 
+}
+
+void DayViewDlg::on_NextDay_clicked(){
+
+    if( WriteViewToDB() == true ){
+        ui->deDispDay->setDate( ui->deDispDay->date().addDays(1) );
+        UpdateView();
+    }
+}
+
+void DayViewDlg::on_PrevDay_clicked(){
+
+    if( WriteViewToDB() == true ){
+        ui->deDispDay->setDate( ui->deDispDay->date().addDays(-1) );
+        UpdateView();
+    }
 }
 
 void DayViewDlg::UpdateView( ){

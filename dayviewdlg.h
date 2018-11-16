@@ -22,6 +22,9 @@ public:
     void SetData( tlData* pd );
 
 private:
+
+    bool WriteViewToDB( void );
+
     Ui::DayViewDlg *ui;
     QMenu* cmDayContent;
     QAction* cmaDayContentEdit;
@@ -33,6 +36,8 @@ private:
  private slots:
     void accept();
     void rejected();
+    void on_NextDay_clicked();
+    void on_PrevDay_clicked();
     void UpdateView( );
     void on_twDayContent_itemChanged( QTreeWidgetItem *item, int column );
     void ShowContextMenu( const QPoint &pos );
