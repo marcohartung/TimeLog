@@ -241,9 +241,15 @@ void DayViewDlg::UpdateView( ){
                 pTreeItem->setText( 0, "" );
                 pTreeItem->setText( 1, "" );
 
-                pTreeItem->setText( 2, tlTools::TimesToSpanString( i->timeStart, i->timeStop ) );
                 pTreeItem->setText( 3, i->timeStart.toString() );
-                pTreeItem->setText( 4, i->timeStop.toString() );
+                if( i->timeStop != tlData::invalidTime ){
+                    pTreeItem->setText( 4, i->timeStop.toString() );
+                    pTreeItem->setText( 2, tlTools::TimesToSpanString( i->timeStart, i->timeStop ) );
+                }
+                else{
+                    pTreeItem->setText( 4, "--" );
+                    pTreeItem->setText( 2, "--" );
+                }
 
                 for( ii = i->tasks.begin(); ii < i->tasks.end(); ii++ ){
                     pTreeSubItem = new QTreeWidgetItem;
