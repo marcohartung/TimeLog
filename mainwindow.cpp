@@ -122,9 +122,13 @@ void MainWindow::ticTimer(){
         }
     }
 
-    ui->lWorkTime->setText( tlTools::formatWorkTime( worktime ) );
-    ui->lBreak->setText( tlTools::formatWorkTime( breaktime ) );
+    QString strWorkTime = tlTools::formatWorkTime( worktime );
+    QString strBreakTime = tlTools::formatWorkTime( breaktime );
+    QString strToolTip = "Arbeitszeit:  " + strWorkTime + " - Pause: " + strBreakTime;
+    ui->lWorkTime->setText( strWorkTime );
+    ui->lBreak->setText( strBreakTime );
     ui->lProjTime->setText( tlTools::formatWorkTime( projecttime ) );
+    trayIcon->setToolTip( strToolTip );
 }
 
 void MainWindow::AboutToQuitSignaled(){
