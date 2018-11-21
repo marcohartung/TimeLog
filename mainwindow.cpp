@@ -85,12 +85,21 @@ void MainWindow::createActions()
     closeAction = new QAction(tr("&Beenden"), this);
 //    closeAction->setIcon(QIcon(":/resource/cancel.png") );
     connect(closeAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+
+    actionToggleWork = new QAction( "Arbeit Start",this);
+    connect(actionToggleWork, SIGNAL(triggered()), this, SLOT(WorkStartStopClicked()));
+    actionToggleBreak  = new QAction( "Pause Start",this);
+    actionToggleBreak->setDisabled(true);
+    connect(actionToggleBreak, SIGNAL(triggered()), this, SLOT(BreakStartStopClicked()));
 }
 
 void MainWindow::createTrayIcon()
 {
     trayIconMenu = new QMenu(this);
 
+    trayIconMenu->addAction(actionToggleWork);
+    trayIconMenu->addAction(actionToggleBreak);
+    trayIconMenu->addSeparator();
     trayIconMenu->addAction(closeAction);
 
     trayIcon = new QSystemTrayIcon(this);
@@ -318,6 +327,11 @@ void MainWindow::WorkStartStopClicked(){
         ui->pbWorkStartStop->setText( tr("Start") );
         ui->pbBreakStartStop->setEnabled(false);
         ui->pbProjStartStop->setEnabled(false);
+
+        actionToggleWork->setText( "Arbeit Start" );
+        actionToggleBreak->setText( "Pause Start" );
+        actionToggleBreak->setDisabled(true);
+
         f_working = false;
         if( f_break ){
             // stop break also if work is finished
@@ -329,6 +343,11 @@ void MainWindow::WorkStartStopClicked(){
         ui->pbWorkStartStop->setText( tr("Stop") );
         ui->pbBreakStartStop->setEnabled(true);
         ui->pbProjStartStop->setEnabled(true);
+
+        actionToggleWork->setText( "Arbeit Stop" );
+        actionToggleBreak->setText( "Pause Start" );
+        actionToggleBreak->setDisabled(false);
+
         f_working = true;
     }
 }
@@ -343,6 +362,9 @@ void MainWindow::BreakStartStopClicked(){
             ProjStartStopClicked();
         }
         ui->pbBreakStartStop->setText( tr("Pause") );
+
+        actionToggleBreak->setText( "Pause Start" );
+
         f_break = false;
     }
     else{
@@ -352,6 +374,9 @@ void MainWindow::BreakStartStopClicked(){
         }
         data.AddTime( QDate::currentDate(), QTime::currentTime(), tlData::enuStart, tlData::enuBreak );
         ui->pbBreakStartStop->setText( tr("Pause Ende") );
+
+        actionToggleBreak->setText( "Pause Stop" );
+
         f_break = true;
     }
 }

@@ -58,6 +58,8 @@ private:
 
     QAction *configAction;
     QAction *closeAction;
+    QAction *actionToggleWork;
+    QAction *actionToggleBreak;
 
     QTimer *timer;
 
