@@ -16,10 +16,11 @@ ReportDlg::ReportDlg(QWidget *parent) :
     ui->deDateStart->setDate( QDate( today.year(), today.month(), 1 ) );
     ui->deDateEnd->setDate( today );
 
-    ui->twOverview->setColumnCount( 2 );
+    ui->twOverview->setColumnCount( 3 );
     QStringList HeaderLabel;
     HeaderLabel.push_back( "Datum" );
     HeaderLabel.push_back( "Zeit" );
+    HeaderLabel.push_back( "Projekt Zeit [%]" );
     ui->twOverview->setHeaderLabels( HeaderLabel );
 
     connect( ui->deDateStart, SIGNAL(editingFinished()), this, SLOT(UpdateView()) );
@@ -49,6 +50,7 @@ void ReportDlg::UpdateView( ){
 
             tlData::WorkSummery_t ws = pData->GetWorktimeSummery( date, date, false );
             if( ws.WorkDays == 1 ){
+                qint64 ProjTime_sec = 0;
                 pTreeItem = new QTreeWidgetItem;
                 pTreeItem->setText( 0, date.toString() );
                 pTreeItem->setText( 1, tlTools::formatWorkTime( ws.TimeWork_sec ) );
@@ -63,10 +65,18 @@ void ReportDlg::UpdateView( ){
                     pTreeSubItem = new QTreeWidgetItem;
                     QString InfoText;
 
+                    ProjTime_sec += i->time_sec;
                     InfoText = i->TaskName + " (" + i->TaskSubName + ")";
                     pTreeSubItem->setText( 0, InfoText );
                     pTreeSubItem->setText( 1, tlTools::formatWorkTime( i->time_sec ) );
                     pTreeItem->addChild( pTreeSubItem );
+                }
+
+                // print project time / work time ration in percent
+                float ProjTime_percent = (float)ProjTime_sec / (float)ws.TimeWork_sec * 100.0;
+                pTreeItem->setText( 2, QString::asprintf( "%.1f", ProjTime_percent ) );
+                if( ProjTime_percent > 100 ){
+                    pTreeItem->setTextColor( 2, QColor(255,0,0,255) );
                 }
 
                 ui->twOverview->addTopLevelItem( pTreeItem );
