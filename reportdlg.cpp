@@ -106,7 +106,7 @@ void ReportDlg::UpdateView( ){
             WorkInfo = ui->deDateStart->date().toString() + " - " + ui->deDateEnd->date().toString();
             WorkInfo += "\r\n";
             WorkInfo += "Arbeitszeit gesammt:\t" + tlTools::formatWorkTime( ws.TimeWork_sec ) + "\r\n";
-            WorkInfo += "Arbeittage:         \t" + QString::number( ws.WorkDays );
+            WorkInfo += "Arbeitstage:         \t" + QString::number( ws.WorkDays );
             if( ws.WorkDaysInvalidData > 0 ){
                 WorkInfo += "(" + QString::number( ws.WorkDaysInvalidData ) + "!)";
             }
