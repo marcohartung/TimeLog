@@ -66,8 +66,10 @@ bool DayViewDlg::WriteViewToDB( void ){
     for( int i = 0; i < tlic; i++ ){
         pTreeItem = ui->twDayContent->topLevelItem( i );
 
-
-        if( pTreeItem->flags() & Qt::ItemIsEditable ){
+        if( pTreeItem == 0 ){
+            qCritical( "pTreeItem = null; i = %d",  i );
+        }
+        else if( pTreeItem->flags() & Qt::ItemIsEditable ){
             tlData::worktime_t worktime;
             QTime StartTime, EndTime;
             item_ok = false;
@@ -110,7 +112,10 @@ bool DayViewDlg::WriteViewToDB( void ){
         for( int ii = 0; ii < cchild; ii++ ){
             pTreeSubItem = pTreeItem->child( ii );
 
-            if( pTreeSubItem->flags() & Qt::ItemIsEditable ){
+            if( pTreeSubItem == 0 ){
+                qCritical( "pTreeSubItem = null; ii = %d", ii );
+            }
+            else if( pTreeSubItem->flags() & Qt::ItemIsEditable ){
                 qint64 id = pTreeSubItem->data( 0, Qt::UserRole ).toLongLong();
 
                 // check item
