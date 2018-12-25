@@ -35,6 +35,7 @@ public:
         qint64 TimeWork_sec;
         qint64 TimeBreak_sec;
         qint64 WorkDays;
+        qint64 WorkDaysInvalidData;
         QVector<tasksummery_t> tasks;
     };
 

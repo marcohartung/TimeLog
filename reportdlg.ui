@@ -84,10 +84,10 @@
       <item>
        <widget class="QTreeWidget" name="twOverview">
         <property name="columnCount">
-         <number>3</number>
+         <number>4</number>
         </property>
         <attribute name="headerDefaultSectionSize">
-         <number>200</number>
+         <number>150</number>
         </attribute>
         <column>
          <property name="text">
@@ -102,6 +102,11 @@
         <column>
          <property name="text">
           <string notr="true">3</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string notr="true">4</string>
          </property>
         </column>
        </widget>

@@ -478,10 +478,13 @@ tlData::WorkSummery_t tlData::GetWorktimeSummery( QDate StartDate, QDate EndDate
     QVector<worktime_t>::iterator i;
     QVector<worktask_t>::iterator ii;
     QVector<tasksummery_t>::iterator ts_i;
+    bool invalidData;
+    qint64 tmpTime;
 
     ws.TimeBreak_sec = 0;
     ws.TimeWork_sec = 0;
     ws.WorkDays = 0;
+    ws.WorkDaysInvalidData = 0;
 
     for( QDate date = StartDate; date <= EndDate; date = date.addDays(1) ){
         QVector<tlData::worktime_t> workday = GetWorktimesOfDay( date );
@@ -490,9 +493,15 @@ tlData::WorkSummery_t tlData::GetWorktimeSummery( QDate StartDate, QDate EndDate
             ws.WorkDays++;
         }
 
+        invalidData = false;
         for( i = workday.begin(); i < workday.end(); i++ ){
 
-            ws.TimeWork_sec += (i->timeStop.msecsSinceStartOfDay() - i->timeStart.msecsSinceStartOfDay() ) / 1000;
+            tmpTime = (i->timeStop.msecsSinceStartOfDay() - i->timeStart.msecsSinceStartOfDay() ) / 1000;
+            if( tmpTime < 0 ){
+                tmpTime = 0;
+                invalidData = true;
+            }
+            ws.TimeWork_sec += tmpTime;
 
             for( ii = i->tasks.begin(); ii < i->tasks.end(); ii++ ){
 
@@ -501,7 +510,12 @@ tlData::WorkSummery_t tlData::GetWorktimeSummery( QDate StartDate, QDate EndDate
                         ws.TimeBreak_sec += ii->timeSpan;
                     }
                     else{
-                        ws.TimeBreak_sec += (ii->timeStop.msecsSinceStartOfDay() - ii->timeStart.msecsSinceStartOfDay() ) / 1000.0;
+                        tmpTime = (ii->timeStop.msecsSinceStartOfDay() - ii->timeStart.msecsSinceStartOfDay() ) / 1000.0;
+                        if( tmpTime < 0 ){
+                            tmpTime = 0;
+                            invalidData = true;
+                        }
+                        ws.TimeBreak_sec += tmpTime;
                     }
                 }
                 else{
@@ -534,6 +548,11 @@ tlData::WorkSummery_t tlData::GetWorktimeSummery( QDate StartDate, QDate EndDate
                 }
             }
         }
+
+        if( invalidData ){
+            ws.WorkDaysInvalidData++;
+        }
+
     }
 
     // worktime did not include break time
