@@ -91,12 +91,20 @@ void MainWindow::createActions()
     actionToggleBreak  = new QAction( "Pause Start",this);
     actionToggleBreak->setDisabled(true);
     connect(actionToggleBreak, SIGNAL(triggered()), this, SLOT(BreakStartStopClicked()));
+
+    actionShowDayViewDlg = new QAction( "Tagesansicht...",this);
+    connect(actionShowDayViewDlg, SIGNAL(triggered()), this, SLOT(pbDayViewClicked()));
+    actionShowReportDlg = new QAction( "Übersicht...",this);
+    connect(actionShowReportDlg, SIGNAL(triggered()), this, SLOT(pbOverviewClicked()));
 }
 
 void MainWindow::createTrayIcon()
 {
     trayIconMenu = new QMenu(this);
 
+    trayIconMenu->addAction(actionShowDayViewDlg);
+    trayIconMenu->addAction(actionShowReportDlg);
+    trayIconMenu->addSeparator();
     trayIconMenu->addAction(actionToggleWork);
     trayIconMenu->addAction(actionToggleBreak);
     trayIconMenu->addSeparator();

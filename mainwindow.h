@@ -60,6 +60,8 @@ private:
     QAction *closeAction;
     QAction *actionToggleWork;
     QAction *actionToggleBreak;
+    QAction *actionShowDayViewDlg;
+    QAction *actionShowReportDlg;
 
     QTimer *timer;
 
