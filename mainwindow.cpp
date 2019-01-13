@@ -73,11 +73,19 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     trayIcon->show();
+    fFirstRun = true;
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::show(){
+    if( !(settings.StartToTray() && fFirstRun) ){
+        this->QMainWindow::show();
+    }
+    fFirstRun = false;
 }
 
 void MainWindow::createActions()

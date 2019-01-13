@@ -22,6 +22,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void show(); //overwrite show, so we can start hidden
+
 private:
     void createActions();
     void createTrayIcon();
@@ -55,6 +57,8 @@ private:
 
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
+
+    bool fFirstRun;
 
     QAction *configAction;
     QAction *closeAction;

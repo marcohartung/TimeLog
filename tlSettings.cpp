@@ -13,6 +13,7 @@ bool tlSettings::ReadSettings( void )
 
     strDataPath = settings.value( "DataPath", QDir::homePath() + "/.TimeLog/UserData/TimeLogData.xml" ).toString();
     fLogWorkTimeWithApp = settings.value( "LogWorkTimeWithApp", false ).toBool();
+    fStartToTray = settings.value( "StartToTray", false ).toBool();
 
     return true;
 }
@@ -23,6 +24,7 @@ bool tlSettings::SaveSettings( void )
 
     settings.setValue( "DataPath", strDataPath );
     settings.setValue( "LogWorkTimeWithApp", fLogWorkTimeWithApp );
+    settings.setValue( "StartToTray", fStartToTray );
 
     return true;
 }

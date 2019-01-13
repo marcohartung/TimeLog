@@ -13,18 +13,22 @@ public:
 
     QString DataPath( void ) const { return strDataPath; }
     bool LogWorkTimeWithApp( void ) const { return fLogWorkTimeWithApp; }
+    bool StartToTray( void ) const { return fStartToTray; }
+
 
     // TODO DataPath and FileName Seperate
     // create Folder in DataPath
     // Remove bkup Files > 10
     void SetDataPath( const QString path ){ strDataPath = path; }
     void SetLogWorkTimeWithApp( const bool enabled ){ fLogWorkTimeWithApp = enabled; }
+    void SetStartToTray( const bool enabled ){ fStartToTray = enabled; }
 
  protected:
 
 private:
     QString strDataPath;
     bool fLogWorkTimeWithApp;
+    bool fStartToTray;
 };
 
 #endif // TLSETTINGS_H

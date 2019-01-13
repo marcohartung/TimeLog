@@ -127,9 +127,9 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>180</y>
+     <y>190</y>
      <width>521</width>
-     <height>51</height>
+     <height>81</height>
     </rect>
    </property>
    <property name="title">
@@ -146,6 +146,19 @@
     </property>
     <property name="text">
      <string>Arbeits Erfassung mit Program starten und beenden</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cbStartupToTray">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>361</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Starte minimiert</string>
     </property>
    </widget>
   </widget>

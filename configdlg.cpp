@@ -20,6 +20,7 @@ ConfigDlg::ConfigDlg(QWidget *parent) :
 
     ui->leDataPath->setText( settings.DataPath() );
     ui->cbLogWorkTimeWithApp->setChecked( settings.LogWorkTimeWithApp() );
+    ui->cbStartupToTray->setChecked( settings.StartToTray() );
 }
 
 ConfigDlg::~ConfigDlg()
@@ -44,6 +45,7 @@ void ConfigDlg::SetData( tlData* pd ){
 void ConfigDlg::accept(){
 
     settings.SetLogWorkTimeWithApp( ui->cbLogWorkTimeWithApp->isChecked() );
+    settings.SetStartToTray( ui->cbStartupToTray->isChecked() );
 
     settings.SaveSettings();
     this->setResult( QDialog::Accepted );
