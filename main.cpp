@@ -8,6 +8,7 @@ int main(int argc, char *argv[])
 
     QObject::connect( &a, SIGNAL(aboutToQuit()), &w, SLOT(AboutToQuitSignaled()) );
 
+    QApplication::setQuitOnLastWindowClosed(false);
     w.show();
     return a.exec();
 }
