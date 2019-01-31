@@ -33,8 +33,8 @@ private:
 
     void updateDataFields( void );
 
-    void ReadDataBase( void );
-    void WriteDataBase( void );
+    bool ReadDataBase( void );
+    bool WriteDataBase( void );
     void DBSelect( void );
     void DBCreate( void );
 

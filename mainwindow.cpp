@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QDesktopWidget>
+#include <QFileDialog>
 #include "tltools.h"
 
 #include <QDir>
@@ -65,7 +66,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect( ui->pbBreakStartStop, SIGNAL(clicked()), this, SLOT(BreakStartStopClicked()) );
     connect( ui->pbProjStartStop, SIGNAL(clicked()), this, SLOT(ProjStartStopClicked()) );
 
-    ReadDataBase();
+    if( ReadDataBase() == false ){
+        QMessageBox msgBox;
+        msgBox.setText( tr("Konnte Datenbank nicht laden!") );
+        msgBox.setInformativeText( settings.DataPath() );
+        msgBox.setIcon( QMessageBox::Critical );
+        msgBox.exec();
+        exit(-1);
+    }
+
     updateDataFields();
 
     if( settings.LogWorkTimeWithApp() ){
@@ -269,7 +278,7 @@ void MainWindow::updateDataFields( void )
     }
 }
 
-void MainWindow::ReadDataBase(void )
+bool MainWindow::ReadDataBase(void )
 {
     QFileInfo datafile(settings.DataPath());
     bool state = false;
@@ -288,26 +297,25 @@ void MainWindow::ReadDataBase(void )
             msgBox.setInformativeText( settings.DataPath() );
             QPushButton* pbCreate = msgBox.addButton( tr("Erstelle neue Datenbank"), QMessageBox::AcceptRole );
             QPushButton* pbSelect = msgBox.addButton( tr("Wähle Datenbank"), QMessageBox::AcceptRole );
+            QPushButton* pbAbort = msgBox.addButton( tr("Abbrechen"), QMessageBox::AcceptRole );
             msgBox.exec();
             if( msgBox.clickedButton() == pbCreate ){
                 DBCreate();
             }
             else if( msgBox.clickedButton() == pbSelect ){
                 DBSelect();
+                datafile.setFile( settings.DataPath() );
+            }
+            else if( msgBox.clickedButton() == pbAbort ){
+                break;
             }
         }
     }
 
-    if( state == false ){
-        QMessageBox msgBox;
-        msgBox.setText( tr("Konnte Datenbank nicht laden!") );
-        msgBox.setInformativeText( settings.DataPath() );
-        msgBox.setIcon( QMessageBox::Critical );
-        msgBox.exec();
-    }
+    return state;
 }
 
-void MainWindow::WriteDataBase( void ){
+bool MainWindow::WriteDataBase( void ){
 
     QFileInfo datafile( settings.DataPath() );
     if( datafile.exists() && datafile.isFile() ) {
@@ -317,11 +325,16 @@ void MainWindow::WriteDataBase( void ){
         oldDb.remove();
     }
 
-    data.WriteXml( settings.DataPath() );
+    return data.WriteXml( settings.DataPath() );
 }
 
 void MainWindow::DBSelect( void ){
-// TODO
+
+    QString fileName = QFileDialog::getOpenFileName( this, tr("TimeLog Data"), settings.DataPath(), tr("TimeLog Data (*.xml)") );
+    if( !fileName.isEmpty() ){
+        settings.SetDataPath( fileName );
+        settings.SaveSettings();
+    }
 }
 
 void MainWindow::DBCreate( void ){
