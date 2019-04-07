@@ -12,6 +12,7 @@ public:
     bool SaveSettings( void );
 
     QString DataPath( void ) const { return strDataPath; }
+    QString DataBackupPath( void ) ;
     bool LogWorkTimeWithApp( void ) const { return fLogWorkTimeWithApp; }
     bool StartToTray( void ) const { return fStartToTray; }
 

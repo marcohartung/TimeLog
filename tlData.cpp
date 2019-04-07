@@ -11,13 +11,18 @@ tlData::tlData()
 
 }
 
-bool tlData::ReadXml( const QString strfile ){
+bool tlData::SetDataFile( const QString strFileName ){
+    strDataBaseFileName = strFileName;
+    return true;
+}
+
+bool tlData::ReadXml( void ){
     QDomDocument doc;
     QString errorStr;
     int errorLine;
     int errorColumn;
 
-    QFile file( strfile );
+    QFile file( strDataBaseFileName );
 
     if( !doc.setContent( &file, true, &errorStr, &errorLine, &errorColumn) ){
         QMessageBox::warning( 0, QObject::tr("DOM Parser"),
@@ -135,12 +140,10 @@ bool tlData::ReadXml( const QString strfile ){
         node = node.nextSibling();
     }
 
-    fModified = false;
-
     return true;
 }
 
-bool tlData::WriteXml( const QString FileName ){
+bool tlData::WriteXml( void ){
     const int Indent = 4;
     QDomDocument doc;
     doc.createProcessingInstruction( "xml", "version=\"1.0\" encoding=\"UTF-8\"" );
@@ -208,13 +211,11 @@ bool tlData::WriteXml( const QString FileName ){
         root.appendChild( data );
     }
 
-    QFile file( FileName  );
+    QFile file( strDataBaseFileName  );
     file.open( QIODevice::ReadWrite );
     QTextStream out(&file);
     doc.save(out, Indent);
     file.close();
-
-    fModified = false;
 
     return true;
 }
@@ -310,8 +311,6 @@ bool tlData::AddTime( QDate date, QTime time,
         }
     }
 
-    fModified = true;
-
     return true;
 }
 
@@ -372,7 +371,6 @@ bool tlData::UpdateWorkTask( tlData::worktask_t task ){
         i_tasks->timeSpan = task.timeSpan;
         i_tasks->TaskName = task.TaskName;
         i_tasks->TaskSubName = task.TaskSubName;
-        fModified = true;
         ret = true;
     }
 
@@ -417,7 +415,6 @@ bool tlData::AddProject( const QString projName ){
         project_t p;
         p.Name = projName;
         projects.append( p );
-        fModified = true;
         ret = true;
     }
 
@@ -453,7 +450,6 @@ void tlData::Clear( void ){
     nextDayId = 100;
     nextWorkTimeId = 100;
     nextTaskId = 100;
-    fModified = true;
 }
 
 QVector<tlData::worktime_t> tlData::GetWorktimesOfDay( QDate date ){

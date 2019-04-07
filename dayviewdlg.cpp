@@ -179,7 +179,7 @@ bool DayViewDlg::WriteViewToDB( void ){
                             // TODO ERROR msg
                         }
                     }
-
+                    pData->WriteXml();
                     pTreeSubItem->setFlags( pTreeSubItem->flags() & ~Qt::ItemIsEditable );
                 }
                 else{

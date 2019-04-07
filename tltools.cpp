@@ -1,5 +1,6 @@
 #include "tltools.h"
 #include <QTime>
+#include <QDir>
 
 tlTools::tlTools()
 {
@@ -35,4 +36,8 @@ QTime tlTools::StringToTime( QString Time ){
         timeT.setHMS( hms[0], hms[1], hms[2] );
     }
     return timeT;
+}
+
+QString tlTools::AppendPath(const QString& path1, const QString& path2){
+    return QDir::cleanPath(path1 + QDir::separator() + path2);
 }

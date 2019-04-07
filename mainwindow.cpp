@@ -6,9 +6,8 @@
 #include <QCloseEvent>
 #include <QDesktopWidget>
 #include <QFileDialog>
-#include "tltools.h"
-
 #include <QDir>
+#include "tltools.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -286,7 +285,8 @@ bool MainWindow::ReadDataBase(void )
     while( 1 ){
 
         if( datafile.exists() && datafile.isFile() ) {
-            if( data.ReadXml( settings.DataPath() ) == true ){
+            data.SetDataFile( settings.DataPath() );
+            if( data.ReadXml() == true ){
                 state = true;
             }
             break;
@@ -320,12 +320,31 @@ bool MainWindow::WriteDataBase( void ){
     QFileInfo datafile( settings.DataPath() );
     if( datafile.exists() && datafile.isFile() ) {
         QFile oldDb( settings.DataPath() );
-        oldDb.open( QIODevice::ReadWrite );
-        oldDb.copy( settings.DataPath() + QDateTime::currentDateTime().toString( "yyyy.mm.dd_hhmmsszzz" ) );
-        oldDb.remove();
-    }
+        QDir bkupFolder( settings.DataBackupPath() );
+        if( !bkupFolder.exists() ){
+            bkupFolder.mkpath( bkupFolder.absolutePath() );
+        }
+        QStringList nameFilters;
+        nameFilters << "*" + datafile.fileName();
+        QFileInfoList bkupFiles = bkupFolder.entryInfoList( nameFilters, QDir::NoFilter, QDir::Time );
 
-    return data.WriteXml( settings.DataPath() );
+        // crate one Backup a day
+        if( bkupFiles.size() == 0 ||
+            bkupFiles[0].created() < QDateTime::currentDateTime().addDays(-1) )
+        {
+            QString BackupFileName = QDateTime::currentDateTime().toString( "yyyy.MM.dd_hhmmsszzz_" );
+            BackupFileName +=  datafile.fileName();
+            oldDb.open( QIODevice::ReadWrite );
+            oldDb.copy( tlTools::AppendPath( settings.DataBackupPath(), BackupFileName ) );
+
+            // only keep 10 Backup Files
+            for( int i = 10; i < bkupFiles.size(); i++ ){
+                QFile f( bkupFiles[i].absoluteFilePath() );
+                f.remove();
+            }
+        }
+    }
+    return data.WriteXml();
 }
 
 void MainWindow::DBSelect( void ){
@@ -346,7 +365,8 @@ void MainWindow::DBCreate( void ){
     }
 
     data.Clear();
-    data.WriteXml( settings.DataPath() );
+    data.SetDataFile( settings.DataPath() );
+    data.WriteXml( );
 }
 
 void MainWindow::WorkStartStopClicked(){
@@ -379,6 +399,8 @@ void MainWindow::WorkStartStopClicked(){
 
         f_working = true;
     }
+
+    WriteDataBase();
 }
 
 void MainWindow::BreakStartStopClicked(){
@@ -408,6 +430,8 @@ void MainWindow::BreakStartStopClicked(){
 
         f_break = true;
     }
+
+    WriteDataBase();
 }
 
 
@@ -432,6 +456,8 @@ void MainWindow::ProjStartStopClicked(){
         ui->pbProjStartStop->setText( tr("Stop") );
         f_project = true;
     }
+
+    WriteDataBase();
 }
 
 void MainWindow::BmasImport(){

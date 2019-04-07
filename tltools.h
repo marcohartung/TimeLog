@@ -14,6 +14,8 @@ public:
 
     static qint64 TimesToSpan( QTime Start, QTime End );
 
+    static QString AppendPath( const QString& path1, const QString& path2 );
+
     // read a string and return time as QTime
     // valid formats are:
     // "hh:mm:ss"

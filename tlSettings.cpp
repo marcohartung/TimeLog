@@ -1,4 +1,5 @@
 #include "tlSettings.h"
+#include "tltools.h"
 #include <QSettings>
 #include <QDir>
 
@@ -27,4 +28,9 @@ bool tlSettings::SaveSettings( void )
     settings.setValue( "StartToTray", fStartToTray );
 
     return true;
+}
+
+QString tlSettings::DataBackupPath( void ){
+   QFileInfo dbFileInfo( strDataPath );
+   return   tlTools::AppendPath( dbFileInfo.absolutePath(), "Backup" );
 }

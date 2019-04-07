@@ -69,8 +69,10 @@ public:
 
     tlData();
 
-    bool ReadXml( const QString strfile );
-    bool WriteXml( const QString FileName );
+    bool SetDataFile( const QString strFileName );
+
+    bool ReadXml( void );
+    bool WriteXml( void );
 
     bool AddTime( QDate date, QTime time,
                   TimeType_t type, TimeTask_t task,
@@ -96,13 +98,13 @@ protected:
 
 private:
 
+    QString strDataBaseFileName;
+
     qint64 nextDayId;
     qint64 nextWorkTimeId;
     qint64 nextTaskId;
     QVector<workday_t> days;
     QVector<project_t> projects;
-    bool fModified;
-
 
 };
 
