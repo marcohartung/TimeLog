@@ -77,7 +77,40 @@ MainWindow::MainWindow(QWidget *parent) :
     updateDataFields();
 
     if( settings.LogWorkTimeWithApp() ){
-       WorkStartStopClicked();
+
+        QVector<tlData::worktime_t> workday = data.GetWorktimesOfDay( QDate::currentDate() );
+
+        if( workday.empty() ) {
+            WorkStartStopClicked();
+        }
+        else {
+            QVector<tlData::worktime_t>::iterator i = workday.end()-1;
+
+            QMessageBox msgBox;
+            msgBox.setText( tr("Heute hast du schon gearbeitet!") );
+            msgBox.setInformativeText("Start: " + i->timeStart.toString() + " - Stop: " + i->timeStop.toString() );
+            QPushButton* pbResume = msgBox.addButton( tr("Arbeit fortsetzen"), QMessageBox::AcceptRole );
+            QPushButton* pbStart = msgBox.addButton( tr("Neu Starten"), QMessageBox::AcceptRole );
+            msgBox.addButton( tr("Ignorieren"), QMessageBox::AcceptRole );
+            msgBox.exec();
+            if( msgBox.clickedButton() == pbResume ){
+
+                ui->pbWorkStartStop->setText( tr("Stop") );
+                ui->pbBreakStartStop->setEnabled(true);
+                ui->pbProjStartStop->setEnabled(true);
+
+                actionToggleWork->setText( "Arbeit Stop" );
+                actionToggleBreak->setText( "Pause Start" );
+                actionToggleBreak->setDisabled(false);
+
+                worktime = i->timeStart.msecsTo( QTime::currentTime() ) / 1000;
+
+                f_working = true;
+            }
+            else if( msgBox.clickedButton() == pbStart ){
+                WorkStartStopClicked();
+            }
+        }
     }
 
     trayIcon->show();
