@@ -383,7 +383,7 @@ bool tlData::UpdateWorkTime( tlData::worktime_t worktime ){
     QVector<workday_t>::iterator i_day;
     QVector<worktime_t>::iterator i_times;
 
-    for( i_day = days.begin(); i_day < days.end(); i_day++ ){
+    for( i_day = days.begin(); i_day < days.end() && !found; i_day++ ){
         for( i_times = i_day->times.begin(); i_times < i_day->times.end(); i_times++ ){
             if( i_times->id == worktime.id ){
                 found = true;
