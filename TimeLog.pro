@@ -11,6 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = TimeLog
 TEMPLATE = app
 
+RC_ICONS = AppIcon.ico
 
 SOURCES += main.cpp\
         mainwindow.cpp \

@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QCoreApplication::setOrganizationDomain("helektronik.de");
     QCoreApplication::setApplicationName("TimeLog");
 
-    setWindowIcon(QIcon(":/resource/clock.png"));
+    setWindowIcon(QIcon(":/resource/clock_AppIcon.png"));
 
     f_working = false;
     worktime = 0;

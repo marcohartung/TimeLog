@@ -6,5 +6,6 @@
         <file>resource/clock.png</file>
         <file>resource/error.png</file>
         <file>resource/clock_black.png</file>
+        <file>resource/clock_AppIcon.png</file>
     </qresource>
 </RCC>
