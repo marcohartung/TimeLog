@@ -7,6 +7,9 @@ AboutDlg::AboutDlg(QWidget *parent) :
 {
     ui->setupUi(this);
      connect( ui->pbClose, SIGNAL(clicked()), this, SLOT(close()) );
+
+     ui->label_AppVersion->setText( APP_VERSION );
+     ui->label_Copyright->setText( QString(APP_COPYRIGHT) + QString("\nAll rights reserved.") );
 }
 
 AboutDlg::~AboutDlg()
