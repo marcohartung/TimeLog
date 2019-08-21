@@ -103,14 +103,15 @@ void ReportDlg::UpdateView( ){
                 WorkTimePerDay_sec = ws.TimeWork_sec / (ws.WorkDays - ws.WorkDaysInvalidData);
             }
 
-            WorkInfo = ui->deDateStart->date().toString() + " - " + ui->deDateEnd->date().toString();
+            WorkInfo = ui->deDateStart->date().toString() + " - " + ui->deDateEnd->date().toString() + "\r\n";
             WorkInfo += "\r\n";
             WorkInfo += "Arbeitszeit gesammt:\t" + tlTools::formatWorkTime( ws.TimeWork_sec ) + "\r\n";
-            WorkInfo += "Arbeitstage:         \t" + QString::number( ws.WorkDays );
+            WorkInfo += "Arbeitstage:        \t" + QString::number( ws.WorkDays );
             if( ws.WorkDaysInvalidData > 0 ){
                 WorkInfo += "(" + QString::number( ws.WorkDaysInvalidData ) + "!)";
             }
             WorkInfo += "\r\n";
+            WorkInfo += "Diff. Arbeitszeit 8h/Tag:\t" + tlTools::formatWorkTime( ws.TimeWork_sec - ( ws.WorkDays * (8*60*60) ) ) + "\r\n";
             WorkInfo += "Arbeitszeit pro Tag:\t" + tlTools::formatWorkTime( WorkTimePerDay_sec ) + "\r\n";
             WorkInfo += "\r\n";
             QVector<tlData::tasksummery_t>::iterator tasks_i;
