@@ -9,7 +9,7 @@ tlTools::tlTools()
 
 
 QString tlTools::formatWorkTime( qint64 time ){
-    return QString::asprintf( "%02lld:%02lld:%02lld", time / (60*60),(time % (60*60)) / 60, time % 60 );
+    return QString::asprintf( "%02lld:%02lld:%02lld", time / (60*60), qAbs( (time % (60*60)) / 60 ), qAbs( time % 60 ) );
 }
 
 QString tlTools::TimesToSpanString( QTime Start, QTime End ){
