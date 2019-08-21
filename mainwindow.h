@@ -50,10 +50,8 @@ private:
 
     bool f_working;
     bool f_break;
-    bool f_project;
     qint64 worktime;
     qint64 breaktime;
-    qint64 projecttime;
 
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
@@ -82,7 +80,6 @@ private slots:
 
     void WorkStartStopClicked();
     void BreakStartStopClicked();
-    void ProjStartStopClicked();
 
     void ProjImport();
     void BmasImport();

@@ -23,8 +23,6 @@ MainWindow::MainWindow(QWidget *parent) :
     worktime = 0;
     f_break = false;
     breaktime = 0;
-    f_project = false;
-    projecttime = 0;
 
     ui->setupUi(this);
 
@@ -55,7 +53,6 @@ MainWindow::MainWindow(QWidget *parent) :
     createTimer();
 
     ui->pbBreakStartStop->setEnabled(false);
-    ui->pbProjStartStop->setEnabled(false);
 
     connect( ui->actionOptions, SIGNAL(triggered()), this, SLOT(tbSettingsClicked()) );
     connect( ui->actionReport, SIGNAL(triggered()), this, SLOT(pbOverviewClicked()) );
@@ -65,7 +62,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect( ui->pbWorkStartStop, SIGNAL(clicked()), this, SLOT(WorkStartStopClicked()) );
     connect( ui->pbBreakStartStop, SIGNAL(clicked()), this, SLOT(BreakStartStopClicked()) );
-    connect( ui->pbProjStartStop, SIGNAL(clicked()), this, SLOT(ProjStartStopClicked()) );
 
     if( ReadDataBase() == false ){
         QMessageBox msgBox;
@@ -75,8 +71,6 @@ MainWindow::MainWindow(QWidget *parent) :
         msgBox.exec();
         exit(-1);
     }
-
-    updateDataFields();
 
     if( settings.LogWorkTimeWithApp() ){
 
@@ -99,7 +93,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
                 ui->pbWorkStartStop->setText( tr("Stop") );
                 ui->pbBreakStartStop->setEnabled(true);
-                ui->pbProjStartStop->setEnabled(true);
 
                 actionToggleWork->setText( "Arbeit Stop" );
                 actionToggleBreak->setText( "Pause Start" );
@@ -183,11 +176,7 @@ void MainWindow::ticTimer(){
         breaktime++;
     }
     else if( f_working ){
-        worktime ++;
-
-        if( f_project ){
-            projecttime++;
-        }
+        worktime++;
     }
 
     QString strWorkTime = tlTools::formatWorkTime( worktime );
@@ -195,7 +184,6 @@ void MainWindow::ticTimer(){
     QString strToolTip = "Arbeitszeit:  " + strWorkTime + " - Pause: " + strBreakTime;
     ui->lWorkTime->setText( strWorkTime );
     ui->lBreak->setText( strBreakTime );
-    ui->lProjTime->setText( tlTools::formatWorkTime( projecttime ) );
     trayIcon->setToolTip( strToolTip );
 }
 
@@ -219,7 +207,6 @@ void MainWindow::tbSettingsClicked(){
     if( confdlg->exec() == QDialog::Accepted ){
         settings.ReadSettings();
         WriteDataBase( );
-        updateDataFields();
     }
 
 }
@@ -299,16 +286,6 @@ void MainWindow::closeEvent( QCloseEvent *event ){
     if( trayIcon->isVisible() ){
         hide();
          event->ignore(); // Don't let the event propagate to the base class
-    }
-}
-
-void MainWindow::updateDataFields( void )
-{
-    QVector<tlData::project_t> projecsts = data.GetProjectList();
-
-    ui->cbProjSel->clear();
-    for( int i = 0; i < projecsts.size(); i++ ){
-        ui->cbProjSel->addItem( projecsts[i].Name );
     }
 }
 
@@ -410,7 +387,6 @@ void MainWindow::WorkStartStopClicked(){
         data.AddTime( QDate::currentDate(), QTime::currentTime(), tlData::enuStop, tlData::enuWork );
         ui->pbWorkStartStop->setText( tr("Start") );
         ui->pbBreakStartStop->setEnabled(false);
-        ui->pbProjStartStop->setEnabled(false);
 
         actionToggleWork->setText( "Arbeit Start" );
         actionToggleBreak->setText( "Pause Start" );
@@ -426,7 +402,6 @@ void MainWindow::WorkStartStopClicked(){
         data.AddTime( QDate::currentDate(), QTime::currentTime(), tlData::enuStart, tlData::enuWork );
         ui->pbWorkStartStop->setText( tr("Stop") );
         ui->pbBreakStartStop->setEnabled(true);
-        ui->pbProjStartStop->setEnabled(true);
 
         actionToggleWork->setText( "Arbeit Stop" );
         actionToggleBreak->setText( "Pause Start" );
@@ -439,57 +414,18 @@ void MainWindow::WorkStartStopClicked(){
 }
 
 void MainWindow::BreakStartStopClicked(){
-    static bool projwasrunning = false;
 
     if( f_break ){
         data.AddTime( QDate::currentDate(), QTime::currentTime(), tlData::enuStop, tlData::enuBreak );
-        if( projwasrunning ){
-            projwasrunning = false;
-            ProjStartStopClicked();
-        }
         ui->pbBreakStartStop->setText( tr("Pause") );
-
         actionToggleBreak->setText( "Pause Start" );
-
         f_break = false;
     }
     else{
-        if( f_project ){
-            projwasrunning = true;
-            ProjStartStopClicked();
-        }
         data.AddTime( QDate::currentDate(), QTime::currentTime(), tlData::enuStart, tlData::enuBreak );
         ui->pbBreakStartStop->setText( tr("Pause Ende") );
-
         actionToggleBreak->setText( "Pause Stop" );
-
         f_break = true;
-    }
-
-    WriteDataBase();
-}
-
-
-void MainWindow::ProjStartStopClicked(){
-
-    if( f_project ){
-        data.AddTime( QDate::currentDate(), QTime::currentTime(),
-                      tlData::enuStop, tlData::enuProject );
-        ui->pbProjStartStop->setText( tr("Start") );
-        ui->cbProjSel->setEnabled( true );
-        ui->cbProjComment->setEnabled( true );
-        f_project = false;
-    }
-    else{
-        ui->cbProjSel->setEnabled( false );
-        ui->cbProjComment->setEnabled( false );
-        data.AddTime( QDate::currentDate(), QTime::currentTime(),
-                      tlData::enuStart, tlData::enuProject,
-                      ui->cbProjSel->currentText(),
-                      ui->cbProjComment->currentText()
-                     );
-        ui->pbProjStartStop->setText( tr("Stop") );
-        f_project = true;
     }
 
     WriteDataBase();
