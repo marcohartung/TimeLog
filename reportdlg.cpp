@@ -114,11 +114,18 @@ void ReportDlg::UpdateView( ){
             WorkInfo += "Diff. Arbeitszeit 8h/Tag:\t" + tlTools::formatWorkTime( ws.TimeWork_sec - ( ws.WorkDays * (8*60*60) ) ) + "\r\n";
             WorkInfo += "Arbeitszeit pro Tag:\t" + tlTools::formatWorkTime( WorkTimePerDay_sec ) + "\r\n";
             WorkInfo += "\r\n";
+
+            // Percent of every Project
             QVector<tlData::tasksummery_t>::iterator tasks_i;
+            qint64 sumNotProjTime_sec = ws.TimeWork_sec;
             for( tasks_i = ws.tasks.begin(); tasks_i < ws.tasks.end(); tasks_i++ ) {
                 WorkInfo += tasks_i->TaskName + "\t" + tlTools::formatWorkTime( tasks_i->time_sec );
-                WorkInfo += "\t" + QString::number( ((double)(tasks_i->time_sec) / (double)(ws.TimeWork_sec)) * 100.0, 'f', 1 ) + "%\r\n"  ;
+                WorkInfo += "\t" + QString::number( ((double)(tasks_i->time_sec) / (double)(ws.TimeWork_sec)) * 100.0, 'f', 1 ) + "%\r\n";
+                sumNotProjTime_sec -= tasks_i->time_sec;
             }
+            // time not assigned to a project
+            WorkInfo += " --- \t" + tlTools::formatWorkTime( sumNotProjTime_sec );
+            WorkInfo += "\t" + QString::number( ((double)(sumNotProjTime_sec) / (double)(ws.TimeWork_sec)) * 100.0, 'f', 1 ) + "%\r\n";
             ui->teSummery->setText( WorkInfo );
         }
     }
