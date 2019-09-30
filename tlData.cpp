@@ -353,11 +353,11 @@ bool tlData::UpdateWorkTask( tlData::worktask_t task ){
     QVector<worktime_t>::iterator i_times;
     QVector<worktask_t>::iterator i_tasks;
 
-    for( i_day = days.begin(); i_day < days.end(); i_day++ ){
-        for( i_times = i_day->times.begin(); i_times < i_day->times.end(); i_times++ ){
+    for( i_day = days.begin(); !found && i_day < days.end(); i_day++ ){
+        for( i_times = i_day->times.begin(); !found && i_times < i_day->times.end(); i_times++ ){
             for( i_tasks = i_times->tasks.begin(); i_tasks < i_times->tasks.end(); i_tasks++ ){
                 if( i_tasks->id == task.id ){
-                    found = true;
+                    found = true; // found will "break" all for loops
                     break;
                 }
             }
