@@ -40,7 +40,7 @@ DayViewDlg::DayViewDlg(QWidget *parent) :
     connect(cmaDayContentAdd, SIGNAL(triggered()), this, SLOT(AddData()));
     connect( ui->pbNextDay, SIGNAL(clicked()), this, SLOT(on_NextDay_clicked()) );
     connect( ui->pbPrevDay, SIGNAL(clicked()), this, SLOT(on_PrevDay_clicked()) );
-    connect( ui->deDispDay, SIGNAL(editingFinished()), this, SLOT(UpdateView()) );
+    connect( ui->deDispDay, SIGNAL(dateChanged(QDate)), this, SLOT(UpdateView()) );
     connect( ui->twDayContent, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ShowContextMenu(const QPoint &)));
     connect( ui->twDayContent, SIGNAL(itemChanged(QTreeWidgetItem *, int)), this, SLOT(on_twDayContent_itemChanged(QTreeWidgetItem*,int)));
 
@@ -60,6 +60,9 @@ DayViewDlg::DayViewDlg(QWidget *parent) :
     ui->twDayContent->setContextMenuPolicy( Qt::CustomContextMenu );
     ui->twDayContent->setSelectionMode( QAbstractItemView::SingleSelection );
     ui->twDayContent->blockSignals(false);
+    ui->twDayContent->header()->setStretchLastSection(false);
+    ui->twDayContent->header()->setSectionResizeMode( 1, QHeaderView::ResizeToContents );
+    ui->twDayContent->header()->setSectionResizeMode( 1, QHeaderView::Stretch );
 }
 
 DayViewDlg::~DayViewDlg()
