@@ -35,6 +35,8 @@ ConfigDlg::ConfigDlg(QWidget *parent) :
     pData = 0;
     settings.ReadSettings();
 
+    ui->groupBox_Project->setVisible(false);
+
     ui->leDataPath->setText( settings.DataPath() );
     ui->cbLogWorkTimeWithApp->setChecked( settings.LogWorkTimeWithApp() );
     ui->cbStartupToTray->setChecked( settings.StartToTray() );

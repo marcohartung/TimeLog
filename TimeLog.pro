@@ -5,7 +5,7 @@
 #-------------------------------------------------
 TARGET = TimeLog
 TEMPLATE = app
-VERSION = "0.0.7.0"
+VERSION = "0.0.8.0_beta"
 
 RC_ICONS = "resource/TimeLog.ico"
 
