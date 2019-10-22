@@ -54,6 +54,8 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
     createTrayIcon();
 
+    setFixedSize( this->size() );
+
     // hiden import menu
     if(0){
         QMenu *importMenu = new QMenu( "Import", this );

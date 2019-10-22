@@ -35,6 +35,8 @@ ConfigDlg::ConfigDlg(QWidget *parent) :
     pData = 0;
     settings.ReadSettings();
 
+    setFixedSize( this->size() );
+
     ui->groupBox_Project->setVisible(false);
 
     ui->leDataPath->setText( settings.DataPath() );
