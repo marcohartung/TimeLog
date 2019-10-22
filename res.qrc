@@ -1,10 +1,8 @@
 <RCC>
     <qresource prefix="/">
-        <file>resource/cancel.png</file>
         <file>resource/configure.png</file>
         <file>resource/menu.png</file>
         <file>resource/clock.png</file>
-        <file>resource/error.png</file>
         <file>resource/clock_black.png</file>
         <file>resource/clock_AppIcon.png</file>
     </qresource>

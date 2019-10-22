@@ -147,7 +147,6 @@ void MainWindow::show(){
 void MainWindow::createActions()
 {
     closeAction = new QAction(tr("&Beenden"), this);
-//    closeAction->setIcon(QIcon(":/resource/cancel.png") );
     connect(closeAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
     actionToggleWork = new QAction( "Arbeit Start",this);

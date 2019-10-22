@@ -80,7 +80,7 @@ void ReportDlg::UpdateView( ){
                     pTreeSubItem->setText( 1, tlTools::formatWorkTime( ws.TimeBreak_sec ) );
                 }
                 else {
-                    pTreeItem->setIcon( 3, QIcon(":/resource/error.png") );
+                    pTreeItem->setText( 3, "!!!" );
                 }
                 pTreeItem->addChild( pTreeSubItem );
 
