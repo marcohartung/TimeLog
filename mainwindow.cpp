@@ -26,6 +26,7 @@
 #include <QFileDialog>
 #include <QDir>
 #include "tltools.h"
+#include "tlData.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -118,7 +119,9 @@ MainWindow::MainWindow(QWidget *parent) :
                 actionToggleBreak->setText( "Pause Start" );
                 actionToggleBreak->setDisabled(false);
 
-                worktime = i->timeStart.msecsTo( QTime::currentTime() ) / 1000;
+                tlData::WorkSummery_t summery = data.GetWorktimeSummery( QDate::currentDate(), QDate::currentDate() );
+                worktime = summery.TimeWork_sec;
+                breaktime = summery.TimeBreak_sec;
 
                 f_working = true;
             }
