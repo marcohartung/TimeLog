@@ -1,7 +1,7 @@
 rem Create zip file with .exe and all dlls for deployment
 rem Marco Hartung 06.09.2018
 
-set APP_VERSION=0.0.7
+set APP_VERSION=0.0.8
 
 cd..
 cd..

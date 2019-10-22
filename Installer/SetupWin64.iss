@@ -8,7 +8,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{5368F356-3610-4274-A7AA-232911CA116E}
 AppName=TimeLog
-AppVersion=0.0.7
+AppVersion=0.0.8
 AppPublisher=Marco Hartung
 AppPublisherURL=http://www.helektronik.de
 AppSupportURL=http://www.helektronik.de
@@ -18,7 +18,7 @@ DefaultGroupName=TimeLog
 Compression=lzma
 SolidCompression=yes
 UninstallDisplayIcon={app}\TimeLog.exe,0
-OutputBaseFilename=TimeLog_0.0.7_x64_install
+OutputBaseFilename=TimeLog_0.0.8_x64_install
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
