@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=TimeLog
+Comment=The best Qt Application Ever
+Exec=TimeLog
+Icon=TimeLog
+Categories=Office;
